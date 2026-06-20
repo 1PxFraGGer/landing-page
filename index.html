@@ -351,20 +351,81 @@
   }
   .accred-pill .dot { width:8px; height:8px; background: var(--blue); border-radius: 50%; }
 
-  /* ── FAQ ── */
-  .faq-list { max-width: 800px; margin: 36px auto 0; }
-  .faq-item { border: 1.5px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
-  .faq-q {
-    padding: 16px 20px; font-size: 15px; font-weight: 600; color: var(--navy);
-    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-    background: #fff; transition: background .15s;
-  }
-  .faq-q:hover { background: var(--light-bg); }
-  .faq-q .arrow { color: var(--blue); font-size: 18px; transition: transform .25s; }
-  .faq-item.open .faq-q .arrow { transform: rotate(180deg); }
-  .faq-a { display: none; padding: 0 20px 16px; font-size: 14px; color: var(--text-mid); line-height: 1.7; border-top: 1px solid var(--border); background: #fff; }
-  .faq-item.open .faq-a { display: block; }
+ /* ── FAQ (3D) ── */
+.faq-list { max-width: 800px; margin: 36px auto 0; perspective: 1200px; }
+.faq-item {
+  border: 1.5px solid var(--border); border-radius: 14px; margin-bottom: 16px;
+  overflow: hidden; background: #fff;
+  transition: border-color .35s ease, box-shadow .35s ease, transform .35s ease;
+  opacity: 0; transform: translateY(24px) rotateX(-8deg);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.faq-item.faq-visible { opacity: 1; transform: translateY(0) rotateX(0deg); }
+.faq-item:hover {
+  box-shadow: 0 16px 36px rgba(76,121,220,.18);
+  transform: translateY(-4px) rotateX(2deg);
+}
+.faq-item.open {
+  border-color: var(--blue);
+  box-shadow: 0 18px 40px rgba(76,121,220,.22);
+}
 
+.faq-q {
+  padding: 18px 22px; font-size: 15px; font-weight: 600; color: var(--navy);
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  background: #fff; transition: background .3s ease, color .3s ease;
+  position: relative; user-select: none;
+}
+.faq-q:hover { background: var(--light-bg); }
+.faq-item.open .faq-q { color: var(--blue); background: var(--light-bg); }
+.faq-q .q-text { flex: 1; transition: color .3s ease; }
+
+/* 3D flip icon: a little cube-like toggle */
+.faq-q .arrow {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  position: relative;
+  perspective: 200px;
+}
+.faq-q .arrow .arrow-face {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: rgba(76,121,220,.1);
+  color: var(--blue); font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  backface-visibility: hidden;
+  transition: transform .5s cubic-bezier(.4,0,.2,1), background .35s ease, color .35s ease;
+  transform: rotateY(0deg);
+}
+.faq-q .arrow .arrow-face.back {
+  transform: rotateY(180deg);
+  background: var(--blue); color: #fff;
+}
+.faq-item.open .arrow .arrow-face.front { transform: rotateY(180deg); }
+.faq-item.open .arrow .arrow-face.back { transform: rotateY(360deg); }
+
+/* 3D unfolding answer panel */
+.faq-a-wrap {
+  max-height: 0;
+  overflow: hidden;
+  transform-origin: top center;
+  transform: rotateX(-90deg);
+  transition: max-height .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+  transform-style: preserve-3d;
+}
+.faq-item.open .faq-a-wrap {
+  max-height: 320px;
+  transform: rotateX(0deg);
+}
+.faq-a {
+  padding: 14px 22px 20px;
+  font-size: 14px; color: var(--text-mid); line-height: 1.75;
+  border-top: 1px solid var(--border);
+  opacity: 0; transform: translateZ(-20px);
+  transition: opacity .4s ease .12s, transform .4s ease .12s;
+}
+.faq-item.open .faq-a { opacity: 1; transform: translateZ(0); }
   /* ── CTA BANNER ── */
   .cta-banner {
     background: linear-gradient(135deg, var(--red) 0%, #c4252a 100%);
@@ -1007,32 +1068,53 @@
     </div>
     <div class="faq-list">
       <div class="faq-item open">
-        <div class="faq-q" onclick="toggleFaq(this)">Is Ganpat University Online UGC approved? <span class="arrow">▼</span></div>
-        <div class="faq-a">Yes, Ganpat University Online is a UGC-approved online university authorised to offer online degree programs in India. All degrees awarded are fully recognised nationally and internationally.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="q-text">Is Ganpat University Online UGC approved?</span>
+          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        </div>
+        <div class="faq-a-wrap"><div class="faq-a">Yes, Ganpat University Online is a UGC-approved online university authorised to offer online degree programs in India. All degrees awarded are fully recognised nationally and internationally.</div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What are the BBA fees and eligibility? <span class="arrow">▼</span></div>
-        <div class="faq-a">The Online BBA is a 3-year program with an annual fee of ₹30,500 (total ₹90,500). Eligibility: 10+2 / HSC from any recognised board. Pay full fee upfront and save 20% — pay just ₹77,300.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="q-text">What are the BBA fees and eligibility?</span>
+          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        </div>
+        <div class="faq-a-wrap"><div class="faq-a">The Online BBA is a 3-year program with an annual fee of ₹30,500 (total ₹90,500). Eligibility: 10+2 / HSC from any recognised board. Pay full fee upfront and save 20% — pay just ₹77,300.</div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What are the MBA fees and eligibility? <span class="arrow">▼</span></div>
-        <div class="faq-a">The Online MBA is a 2-year program with an annual fee of ₹49,000 (total ₹98,000 for 2 years). Eligibility: Bachelor's degree from any recognised university with at least 50% aggregate marks (45% for reserved category).</div>
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="q-text">What are the MBA fees and eligibility?</span>
+          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        </div>
+        <div class="faq-a-wrap"><div class="faq-a">The Online MBA is a 2-year program with an annual fee of ₹49,000 (total ₹98,000 for 2 years). Eligibility: Bachelor's degree from any recognised university with at least 50% aggregate marks (45% for reserved category).</div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What are the MCA fees and eligibility? <span class="arrow">▼</span></div>
-        <div class="faq-a">The Online MCA is a 2-year program with an annual fee of ₹49,000. Eligibility: Bachelor's degree in Computer Applications, Computer Science, or Mathematics with at least 50% marks.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="q-text">What are the MCA fees and eligibility?</span>
+          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        </div>
+        <div class="faq-a-wrap"><div class="faq-a">The Online MCA is a 2-year program with an annual fee of ₹49,000. Eligibility: Bachelor's degree in Computer Applications, Computer Science, or Mathematics with at least 50% marks.</div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How are online classes conducted? <span class="arrow">▼</span></div>
-        <div class="faq-a">Classes are delivered through an interactive Learning Management System (LMS) with recorded lectures, live sessions, e-content, practice tests, and virtual academic support available 24/7.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="q-text">How are online classes conducted?</span>
+          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        </div>
+        <div class="faq-a-wrap"><div class="faq-a">Classes are delivered through an interactive Learning Management System (LMS) with recorded lectures, live sessions, e-content, practice tests, and virtual academic support available 24/7.</div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is the online degree valid for jobs and higher studies? <span class="arrow">▼</span></div>
-        <div class="faq-a">Yes. Degrees awarded by Ganpat University Online are valid for employment and higher education in India and abroad. The university is UGC-entitled and NAAC 'A' accredited.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="q-text">Is the online degree valid for jobs and higher studies?</span>
+          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        </div>
+        <div class="faq-a-wrap"><div class="faq-a">Yes. Degrees awarded by Ganpat University Online are valid for employment and higher education in India and abroad. The university is UGC-entitled and NAAC 'A' accredited.</div></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Are EMI or loan options available? <span class="arrow">▼</span></div>
-        <div class="faq-a">Yes! You can choose from loan assistance, easy EMI plans, and several flexible payment options. Contact our counsellors at admission@guniol.com or +91 9240271367 for personalised support.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="q-text">Are EMI or loan options available?</span>
+          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        </div>
+        <div class="faq-a-wrap"><div class="faq-a">Yes! You can choose from loan assistance, easy EMI plans, and several flexible payment options. Contact our counsellors at admission@guniol.com or +91 9240271367 for personalised support.</div></div>
       </div>
     </div>
   </div>
@@ -1137,6 +1219,28 @@ function drawPath(){
 
 window.addEventListener('load', drawPath);
 window.addEventListener('resize', drawPath);
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  item.parentElement.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+(function(){
+  const items = document.querySelectorAll('.faq-item');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(i => i.classList.add('faq-visible'));
+    return;
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, idx) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('faq-visible'), idx * 80);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  items.forEach(i => obs.observe(i));
+})();
 </script>
 </body>
 </html>
