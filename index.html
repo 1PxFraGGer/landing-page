@@ -465,6 +465,65 @@
   color:#1e293b;
   line-height:1.3;
 }
+/* ── TOP RECRUITERS (double-row carousel) ── */
+.recruiters-section { background: #fff; }
+.recruiters-carousel{
+  overflow:hidden;
+  width:100%;
+  margin-top:2rem;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.recruiters-track{
+  display:flex;
+  gap:18px;
+  width:max-content;
+}
+.recruiters-track.row-1{ animation: recruitersScrollLeft 35s linear infinite; }
+.recruiters-track.row-2{ animation: recruitersScrollRight 35s linear infinite; }
+.recruiters-carousel:hover .recruiters-track{ animation-play-state:paused; }
+@keyframes recruitersScrollLeft{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+@keyframes recruitersScrollRight{
+  from{ transform:translateX(-50%); }
+  to{ transform:translateX(0); }
+}
+.recruiter-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:#fff;
+  border:1px solid #e0e2f5;
+  border-radius:12px;
+  padding:14px 10px;
+  width:128px;
+  height:108px;
+  flex-shrink:0;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(63,58,168,0.08);
+  transition: all .25s ease;
+}
+.recruiter-card:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 12px 26px rgba(63,58,168,.2);
+  border-color: #3f3aa8;
+}
+.recruiter-logo{
+  width:44px; height:44px; border-radius:8px;
+  background:#f4f5fb; border:1px solid #e0e2f5;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.recruiter-logo img{ width:38px; height:38px; object-fit:contain; }
+.recruiter-card span{
+  font-size:11.5px; font-weight:700; color:#1f2a44; line-height:1.2;
+}
+
   /* ── RESPONSIVE ── */
   @media(max-width:960px){
     .hero-inner { grid-template-columns: 1fr; }
@@ -631,39 +690,41 @@
 </section>
 
 <!-- ABOUT UNIVERSITY (intro, right after hero) -->
-<section class="section intro-about" id="about-intro">
+
+<!-- ACCREDITATION -->
+<section class="section accred-section">
   <div class="section-inner">
-    <div class="intro-grid">
-      <div class="intro-collage">
-        <div class="intro-photo-main">
-          <img src="assets/img/12.jpg" alt="Ganpat University Campus Building">
-        </div>
-        <div class="intro-photo-sign">
-          <img src="assets/img/13.jpg" alt="GUNI Campus Sign">
-        </div>
-      </div>
-      <div class="intro-content">
-        <span class="section-label">Ganpat University</span>
-        <h2>Bringing Premier Education to Your Doorstep</h2>
-        <p>Ganpat University and the township of Ganpat Vidyanagar, a high-tech education campus, is a joint initiative — purely philanthropic in nature — by a large number of industrialists and technocrats, noble farmers and affluent businessmen for the mission of "Social Upliftment through Education." The University was established by the State Government by enactment of Act No. 19/2005 on 12th April 2005, and is approved under Section 2(f) by the University Grants Commission (UGC).</p>
-        <p>In consideration of its contribution to education in a short span of time, the University has been given Permanent Membership in renowned academic and industry associations, such as the Association of Indian Universities (AIU) and the Association of Commonwealth Universities (ACU).</p>
-        <a href="#about" class="btn-primary">Read More →</a>
+    <div class="text-center">
+      <span class="section-label">Quality Assurance</span>
+      <h2 class="section-title">Accreditations & Approvals</h2>
+      <p class="section-sub">Degrees recognised by India's top regulatory and academic bodies.</p>
+    </div>
+
+    <div class="accred-carousel">
+      <div class="accred-track">
+        <div class="accred-card"><img src="assets/logo/1.png" alt="UGC"><span>University Grants Commission</span></div>
+        <div class="accred-card"><img src="assets/logo/2.png" alt="AICTE"><span>AICTE New Delhi</span></div>
+        <div class="accred-card"><img src="assets/logo/3.png" alt="Pharmacy Council"><span>Pharmacy Council of India</span></div>
+        <div class="accred-card"><img src="assets/logo/4.jpg" alt="Council of Architecture"><span>Council of Architecture</span></div>
+        <div class="accred-card"><img src="assets/logo/5.jfif" alt="Ministry of Shipping"><span>Ministry of Shipping, GoI</span></div>
+        <div class="accred-card"><img src="assets/logo/6.jfif" alt="AICTE"><span>Directorate General of Shipping</span></div>
+        <div class="accred-card"><img src="assets/logo/7.jpg" alt="DSIR"><span>DSIR, Govt of India</span></div>
+        <div class="accred-card"><img src="assets/logo/9.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
+
+        <!-- duplicate set for seamless loop -->
+        <div class="accred-card"><img src="assets/logo/1.png" alt="UGC"><span>University Grants Commission</span></div>
+        <div class="accred-card"><img src="assets/logo/2.png" alt="AICTE"><span>AICTE New Delhi</span></div>
+        <div class="accred-card"><img src="assets/logo/3.png" alt="Pharmacy Council"><span>Pharmacy Council of India</span></div>
+        <div class="accred-card"><img src="assets/logo/4.jpg" alt="Council of Architecture"><span>Council of Architecture</span></div>
+        <div class="accred-card"><img src="assets/logo/5.jfif" alt="Ministry of Shipping"><span>Ministry of Shipping, GoI</span></div>
+        <div class="accred-card"><img src="assets/logo/6.jfif" alt="AICTE"><span>Directorate General of Shipping</span></div>
+        <div class="accred-card"><img src="assets/logo/7.jpg" alt="DSIR"><span>DSIR, Govt of India</span></div>
+        <div class="accred-card"><img src="assets/logo/9.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
       </div>
     </div>
   </div>
 </section>
-
 <!-- TRUST STRIP -->
-<div class="trust-strip">
-  <div class="trust-inner">
-    <div class="trust-item"><span class="icon">🏛️</span> UGC Entitled University</div>
-    <div class="trust-item"><span class="icon">⭐</span> NAAC 'A' Accredited</div>
-    <div class="trust-item"><span class="icon">✅</span> AICTE Approved</div>
-    <div class="trust-item"><span class="icon">🎓</span> 100% Online Learning</div>
-    <div class="trust-item"><span class="icon">💼</span> 500+ Hiring Partners</div>
-    <div class="trust-item"><span class="icon">🌐</span> AIU & ACU Member</div>
-  </div>
-</div>
 
 <!-- PROGRAMS -->
 <section class="section" id="programs">
@@ -775,38 +836,7 @@
   </div>
 </section>
 
-<!-- ABOUT -->
-<section class="section about-section" id="about">
-  <div class="section-inner">
-    <div class="about-grid">
-      <div class="about-img-wrap">
-        <div class="campus-label">Est. 2005 · Gujarat, India</div>
-        <h2>Ganpat Vidyanagar — A High-Tech Education Campus</h2>
-        <p>A joint initiative of industrialists, technocrats, and noble farmers for the mission of "Social Upliftment through Education."</p>
-        <div class="stat-grid">
-          <div class="stat-box"><strong>38+</strong><small>UG Programs</small></div>
-          <div class="stat-box"><strong>33+</strong><small>PG Programs</small></div>
-          <div class="stat-box"><strong>28</strong><small>Total Institutes</small></div>
-          <div class="stat-box"><strong>1200+</strong><small>Staff Members</small></div>
-        </div>
-      </div>
-      <div class="about-content">
-        <span class="section-label">Who We Are</span>
-        <h2>Bringing Premier Education to Your Doorstep</h2>
-        <p>Ganpat University was established by the State Government via Act No. 19/2005 on 12th April 2005. It is approved under Section 2(f) by the University Grants Commission (UGC) and accredited with a prestigious NAAC 'A' grade.</p>
-        <p>The University has been given Permanent Membership in the Association of Indian Universities (AIU) and the Association of Commonwealth Universities (ACU), reflecting its global academic standing.</p>
-        <ul class="about-feats">
-          <li>UGC-Entitled and NAAC 'A' Accredited University</li>
-          <li>AICTE, PCI, and COA approved programs</li>
-          <li>4-Star Rating by Govt. of India — IIC 5.0 (2023)</li>
-          <li>Green University Platinum Ranking — UN Status</li>
-          <li>Best Maritime University — SeaJob Anchor Award 2022</li>
-          <li>5-Star Overall Rating by GSIRF 2022 (Govt. of Gujarat)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <!-- WHY CHOOSE -->
 <section class="section" style="background:#fff;">
@@ -900,40 +930,56 @@
   </div>
 </section>
 
-<!-- ACCREDITATION -->
-<section class="section accred-section">
+<!-- TOP RECRUITERS -->
+<section class="section recruiters-section" id="top-recruiters">
   <div class="section-inner">
     <div class="text-center">
-      <span class="section-label">Quality Assurance</span>
-      <h2 class="section-title">Accreditations & Approvals</h2>
-      <p class="section-sub">Degrees recognised by India's top regulatory and academic bodies.</p>
+      <span class="section-label">Career Outcomes</span>
+      <h2 class="section-title">Top Recruiters</h2>
+      <p class="section-sub">Our graduates are hired by leading companies across IT, BFSI, consulting, core industries, and design.</p>
     </div>
 
-    <div class="accred-carousel">
-      <div class="accred-track">
-        <div class="accred-card"><img src="assets/logo/1.png" alt="UGC"><span>University Grants Commission</span></div>
-        <div class="accred-card"><img src="assets/logo/2.png" alt="AICTE"><span>AICTE New Delhi</span></div>
-        <div class="accred-card"><img src="assets/logo/3.png" alt="Pharmacy Council"><span>Pharmacy Council of India</span></div>
-        <div class="accred-card"><img src="assets/logo/4.jpg" alt="Council of Architecture"><span>Council of Architecture</span></div>
-        <div class="accred-card"><img src="assets/logo/5.jfif" alt="Ministry of Shipping"><span>Ministry of Shipping, GoI</span></div>
-        <div class="accred-card"><img src="assets/logo/6.jfif" alt="AICTE"><span>Directorate General of Shipping</span></div>
-        <div class="accred-card"><img src="assets/logo/7.jpg" alt="DSIR"><span>DSIR, Govt of India</span></div>
-        <div class="accred-card"><img src="assets/logo/9.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
-
+    <div class="recruiters-carousel">
+      <!-- ROW 1 — scrolls left -->
+      <div class="recruiters-track row-1">
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/TCS_711ded1f64.webp" alt="TCS"></div><span>TCS</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Infosys_3ab26c7d47.webp" alt="Infosys"></div><span>Infosys</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Wipro_a7c93e27f1.webp" alt="Wipro"></div><span>Wipro</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Accenture_5f4606480a.webp" alt="Accenture"></div><span>Accenture</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Cap_Gemini_4d6aa2d7d8.webp" alt="Capgemini"></div><span>Capgemini</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Deloitte_426d4379b7.webp" alt="Deloitte"></div><span>Deloitte</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/ICICI_Bank_29e38f5027.webp" alt="ICICI Bank"></div><span>ICICI Bank</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/HDFC_Life_77025b3eb9.webp" alt="HDFC Life"></div><span>HDFC Life</span></div>
         <!-- duplicate set for seamless loop -->
-        <div class="accred-card"><img src="assets/logo/1.png" alt="UGC"><span>University Grants Commission</span></div>
-        <div class="accred-card"><img src="assets/logo/2.png" alt="AICTE"><span>AICTE New Delhi</span></div>
-        <div class="accred-card"><img src="assets/logo/3.png" alt="Pharmacy Council"><span>Pharmacy Council of India</span></div>
-        <div class="accred-card"><img src="assets/logo/4.jpg" alt="Council of Architecture"><span>Council of Architecture</span></div>
-        <div class="accred-card"><img src="assets/logo/5.jfif" alt="Ministry of Shipping"><span>Ministry of Shipping, GoI</span></div>
-        <div class="accred-card"><img src="assets/logo/6.jfif" alt="AICTE"><span>Directorate General of Shipping</span></div>
-        <div class="accred-card"><img src="assets/logo/7.jpg" alt="DSIR"><span>DSIR, Govt of India</span></div>
-        <div class="accred-card"><img src="assets/logo/9.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/TCS_711ded1f64.webp" alt="TCS"></div><span>TCS</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Infosys_3ab26c7d47.webp" alt="Infosys"></div><span>Infosys</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Wipro_a7c93e27f1.webp" alt="Wipro"></div><span>Wipro</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Accenture_5f4606480a.webp" alt="Accenture"></div><span>Accenture</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Cap_Gemini_4d6aa2d7d8.webp" alt="Capgemini"></div><span>Capgemini</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Deloitte_426d4379b7.webp" alt="Deloitte"></div><span>Deloitte</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/ICICI_Bank_29e38f5027.webp" alt="ICICI Bank"></div><span>ICICI Bank</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/HDFC_Life_77025b3eb9.webp" alt="HDFC Life"></div><span>HDFC Life</span></div>
+      </div>
+
+      <!-- ROW 2 — scrolls right -->
+      <div class="recruiters-track row-2">
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/B_Yjus_af75fd46e8.webp" alt="Byju's"></div><span>Byju's</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/IDFC_e528a18ce9.webp" alt="IDFC First"></div><span>IDFC First</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/TATA_Group_d27adf45c1.webp" alt="Tata Group"></div><span>Tata Group</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Bo_S_Ch_f7e1c063c0.webp" alt="Bosch"></div><span>Bosch</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Livspace_c64221dade.webp" alt="Livspace"></div><span>Livspace</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Design_Studio_ec05505ec8.webp" alt="Design Studios"></div><span>Design Studios</span></div>
+        <!-- duplicate set for seamless loop -->
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/B_Yjus_af75fd46e8.webp" alt="Byju's"></div><span>Byju's</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/IDFC_e528a18ce9.webp" alt="IDFC First"></div><span>IDFC First</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/TATA_Group_d27adf45c1.webp" alt="Tata Group"></div><span>Tata Group</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Bo_S_Ch_f7e1c063c0.webp" alt="Bosch"></div><span>Bosch</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Livspace_c64221dade.webp" alt="Livspace"></div><span>Livspace</span></div>
+        <div class="recruiter-card"><div class="recruiter-logo"><img src="https://collegekeycms.geduconnect.in/uploads/Design_Studio_ec05505ec8.webp" alt="Design Studios"></div><span>Design Studios</span></div>
       </div>
     </div>
   </div>
 </section>
-
 
 
 <!-- FAQ -->
