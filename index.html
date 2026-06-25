@@ -17,10 +17,42 @@
     --text-light: #777;
     --border: #e0e8f7;
   }
+  /* Sticky nav is ~66px tall — give every anchor target breathing room so
+     clicking a nav/footer link doesn't land with its heading hidden under it. */
+  #about-intro, #accreditations, #programs, #admission, #faq, #contact {
+    scroll-margin-top: 86px;
+  }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+
   body { font-family: 'Inter', sans-serif; color: var(--text-dark); background: #fff; }
   a { text-decoration: none; color: inherit; }
+
+  /* Safety net: an <svg> with only a viewBox and no explicit size will,
+     in some load-order edge cases, paint at a huge intrinsic default size
+     before its real CSS rule has applied. Capping max-width/height here
+     means it can never blow up past its own container even for a frame. */
+  svg { max-width: 100%; max-height: 100%; }
+
+  /* ── ANIMATED ICON SYSTEM (replaces emoji glyphs site-wide) ── */
+  .aicon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .aicon svg { width: 100%; height: 100%; display: block; }
+  @keyframes iconFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  @keyframes iconSpinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes iconPulseRing { 0% { transform: scale(.85); opacity:.9;} 70% { transform: scale(1.25); opacity:0; } 100% { transform: scale(1.25); opacity:0; } }
+  @keyframes iconRing { 0%,100% { stroke-dashoffset: 0; } 50% { stroke-dashoffset: 12; } }
+  @keyframes iconBob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-4px) rotate(4deg); } }
+  @keyframes iconWiggle { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+  @keyframes iconBlink { 0%,40%,100% { opacity: 1; } 50% { opacity: .25; } }
+  @keyframes iconDash { to { stroke-dashoffset: -24; } }
+  @keyframes iconBeat { 0%,100% { transform: scale(1); } 25% { transform: scale(1.18); } 40% { transform: scale(.95); } 60% { transform: scale(1.1); } }
+
+  .top-bar a .aicon { animation: iconFloat 2.4s ease-in-out infinite; }
 
   /* ── TOP BAR ── */
   .top-bar {
@@ -41,6 +73,63 @@
     font-weight: 600; font-size: 12px; animation: pulse 2s infinite;
   }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.75} }
+  /* TOP BAR ANIMATION */
+.top-bar {
+  animation: slideDownFade 0.6s ease-out;
+}
+
+.top-bar .inner {
+  animation: fadeInUp 0.7s ease-out 0.15s both;
+}
+
+.admission-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  animation: badgePulse 1.8s ease-in-out infinite;
+}
+
+.top-bar a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.25s ease;
+}
+
+.top-bar a:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+@keyframes slideDownFade {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
 
   /* ── NAVBAR ── */
   nav {
@@ -68,6 +157,184 @@
     font-weight: 700; font-size: 14px; transition: background .2s;
   }
   .nav-cta:hover { background: #c4252a; }
+  .accreditation-slider {
+  position: relative;
+  width: 110px;
+  height: 44px;
+  overflow: hidden;
+  margin-left: 14px;
+}
+
+.accred-logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 44px;
+  width: auto;
+  max-width: 110px;
+  object-fit: contain;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.accred-logo.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.accred-logo.exit {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+/* ===== NAVBAR ENTRANCE ===== */
+nav {
+  animation: navFadeDown 0.6s ease-out;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo entrance + subtle hover */
+.logo img {
+  animation: logoPop 0.7s ease-out 0.1s both;
+  transition: transform 0.3s ease;
+}
+
+.logo img:hover {
+  transform: scale(1.06) rotate(-1deg);
+}
+
+/* ===== NAV LINKS ===== */
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  opacity: 0;
+  animation: linkFadeUp 0.5s ease-out forwards;
+}
+
+/* staggered entrance for each link */
+.nav-links li:nth-child(1) { animation-delay: 0.15s; }
+.nav-links li:nth-child(2) { animation-delay: 0.22s; }
+.nav-links li:nth-child(3) { animation-delay: 0.29s; }
+.nav-links li:nth-child(4) { animation-delay: 0.36s; }
+.nav-links li:nth-child(5) { animation-delay: 0.43s; }
+.nav-links li:nth-child(6) { animation-delay: 0.50s; }
+
+.nav-links a {
+  position: relative;
+  text-decoration: none;
+  display: inline-block;
+  padding: 4px 2px;
+  transition: transform 0.25s ease;
+}
+
+/* animated underline on hover */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-links a:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== CTA BUTTON ===== */
+.nav-cta {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  text-decoration: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  opacity: 0;
+  animation: ctaFadeIn 0.6s ease-out 0.55s both;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-cta:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.nav-cta:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* shine sweep effect on hover */
+.nav-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.4) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+
+.nav-cta:hover::before {
+  left: 125%;
+}
+
+/* gentle continuous arrow nudge */
+.nav-cta {
+  animation: ctaFadeIn 0.6s ease-out 0.55s both, arrowNudge 2s ease-in-out 1.2s infinite;
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes navFadeDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes logoPop {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes linkFadeUp {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes ctaFadeIn {
+  from { transform: translateY(-8px) scale(0.95); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes arrowNudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
 
   /* ── HERO ── */
   .hero {
@@ -149,7 +416,7 @@
     color: var(--navy); font-size: 18px; font-weight: 700; margin-bottom: 4px;
     font-family: 'Poppins',sans-serif;
   }
-  .enquiry-card p { font-size: 12px; color: #888; margin-bottom: 18px; }
+  .enquiry-card p { font-size: 12px; color: #6b7280; margin-bottom: 18px; opacity: 1; position: relative; z-index: 1; }
   .form-group { margin-bottom: 13px; }
   .form-group label { display: block; font-size: 11px; font-weight: 600; color: #555; margin-bottom: 5px; letter-spacing: .3px; }
   .form-group input, .form-group select {
@@ -166,142 +433,810 @@
     transition: background .2s; font-family: 'Inter',sans-serif;
   }
   .form-submit:hover { background: #c4252a; }
+  .hero {
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  padding: 40px 20px;
+}
 
-  /* ── TRUST STRIP ── */
-  .trust-strip {
-    background: var(--light-bg); padding: 18px 20px; border-bottom: 1px solid var(--border);
-  }
-  .trust-inner {
-    max-width: 1200px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: center; gap: 36px; flex-wrap: wrap;
-  }
-  .trust-item {
-    display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--navy);
-  }
-  .trust-item .icon { font-size: 18px; }
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 40px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
 
-  /* ── SECTION COMMONS ── */
-  .section { padding: 72px 20px; }
-  .section-inner { max-width: 1200px; margin: 0 auto; }
-  .section-label {
-    display: inline-block; background: rgba(76,121,220,.1); color: var(--blue);
-    font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-    padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
-  }
-  .section-title {
-    font-family: 'Poppins',sans-serif; font-size: clamp(22px,3vw,34px); font-weight: 800;
-    color: var(--navy); line-height: 1.25; margin-bottom: 12px;
-  }
-  .section-sub { font-size: 16px; color: var(--text-light); line-height: 1.7; max-width: 600px; }
-  .text-center { text-align: center; }
-  .text-center .section-sub { margin: 0 auto; }
+/* Slightly smaller heading/text so it scales nicely in a shorter hero */
+.hero h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(24px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  letter-spacing: -.5px;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0,0,0,.45);
+}
 
-  /* ── INTRO ABOUT (placed right after hero) ── */
-  .intro-about { background: #fff; }
-  .intro-grid {
-    display: grid; grid-template-columns: 480px 1fr; gap: 50px; align-items: center;
-  }
-  .intro-collage { position: relative; }
-  .intro-photo-main {
-    border-radius: 14px; overflow: hidden; box-shadow: 0 18px 40px rgba(4,51,89,.18);
-  }
-  .intro-photo-main img { width: 100%; display: block; height: 230px; object-fit: cover; }
-  .intro-photo-sign {
-    margin-top: -38px; margin-left: 36px; width: calc(100% - 36px);
-    border-radius: 14px; overflow: hidden; box-shadow: 0 18px 40px rgba(4,51,89,.18);
-    border: 5px solid #fff; position: relative; z-index: 2;
-  }
-  .intro-photo-sign img { width: 100%; display: block; height: 190px; object-fit: cover; }
-  .intro-content .section-label { margin-bottom: 8px; }
-  .intro-content h2 {
-    font-family: 'Poppins',sans-serif; font-size: clamp(22px,3vw,32px); font-weight: 800;
-    color: var(--navy); margin-bottom: 16px; line-height: 1.25;
-  }
-  .intro-content p { font-size: 15px; color: var(--text-mid); line-height: 1.75; margin-bottom: 16px; }
-  .intro-content .btn-primary { margin-top: 6px; display: inline-block; }
+.hero p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 500px;
+  color: #e3edf9;
+  text-shadow: 0 1px 10px rgba(0,0,0,.35);
+}
 
-  /* ── PROGRAMS ── */
-  .programs-grid {
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 26px; margin-top: 44px;
-  }
-  .prog-card {
-    border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden;
-    transition: box-shadow .25s, transform .25s; background: #fff;
-  }
-  .prog-card:hover { box-shadow: 0 12px 40px rgba(76,121,220,.15); transform: translateY(-4px); }
-  .prog-card-top {
-    background: linear-gradient(135deg, var(--navy) 0%, #0d5da6 100%);
-    padding: 26px 24px 20px; color: #fff; position: relative;
-  }
-  .prog-card-top.red-grad { background: linear-gradient(135deg, #9b1b1f 0%, var(--red) 100%); }
-  .prog-card-top.blue-grad { background: linear-gradient(135deg, #1a4db3 0%, var(--blue) 100%); }
-  .prog-badge {
-    display: inline-block; background: rgba(255,255,255,.2); color: #fff;
-    font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
-    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
-  }
-  .prog-card-top h3 { font-family: 'Poppins',sans-serif; font-size: 20px; font-weight: 800; line-height: 1.2; }
-  .prog-card-top .abbr { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 3px; }
-  .prog-card-body { padding: 22px 24px; }
-  .prog-meta {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;
-  }
-  .meta-item label { display: block; font-size: 10px; font-weight: 700; color: #aaa; letter-spacing: .4px; text-transform: uppercase; }
-  .meta-item span { font-size: 14px; font-weight: 700; color: var(--navy); }
-  .prog-fee { background: var(--light-bg); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
-  .prog-fee .fee-label { font-size: 11px; color: #888; font-weight: 600; }
-  .prog-fee .fee-val { font-size: 22px; font-weight: 800; color: var(--navy); }
-  .prog-fee .fee-val span { font-size: 13px; font-weight: 500; color: #888; }
-  .prog-fee .fee-save { font-size: 11px; color: #26a65b; font-weight: 600; margin-top: 2px; }
-  .prog-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
-  .prog-tag {
-    background: rgba(76,121,220,.1); color: var(--blue); border-radius: 4px;
-    font-size: 11px; font-weight: 600; padding: 3px 8px;
-  }
-  .prog-btns { display: flex; gap: 10px; }
-  .btn-enq {
-    flex: 1; background: var(--navy); color: #fff; border: none; padding: 11px 10px;
-    border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .2s;
-    font-family: 'Inter',sans-serif;
-  }
-  .btn-enq:hover { background: #062d50; }
-  .btn-brochure {
-    flex: 1; background: transparent; color: var(--blue); border: 1.5px solid var(--blue);
-    padding: 11px 10px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer;
-    transition: all .2s; font-family: 'Inter',sans-serif;
-  }
-  .btn-brochure:hover { background: var(--blue); color: #fff; }
+.hero-badge {
+  font-size: 11.5px;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+}
 
-  /* ── ABOUT ── */
-  .about-section { background: var(--light-bg); }
-  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 40px; }
-  .about-img-wrap {
-    border-radius: 16px; overflow: hidden; position: relative;
-    background: linear-gradient(135deg, var(--navy) 0%, #0a5fa0 100%);
-    padding: 40px; color: #fff; min-height: 360px;
-    display: flex; flex-direction: column; justify-content: flex-end;
-  }
-  .about-img-wrap .campus-label { font-size: 12px; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .about-img-wrap h2 { font-family: 'Poppins',sans-serif; font-size: 26px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
-  .about-img-wrap p { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.6; }
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
-  .stat-box { background: rgba(255,255,255,.12); border-radius: 10px; padding: 16px; }
-  .stat-box strong { display: block; font-size: 28px; font-weight: 900; color: #7eb5ff; }
-  .stat-box small { font-size: 11px; color: rgba(255,255,255,.65); }
-  .about-content h2 { font-family: 'Poppins',sans-serif; font-size: 28px; font-weight: 800; color: var(--navy); margin-bottom: 16px; line-height: 1.25; }
-  .about-content p { font-size: 15px; color: var(--text-mid); line-height: 1.75; margin-bottom: 18px; }
-  .about-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .about-feats li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text-mid); }
-  .about-feats li::before { content:'✓'; background: var(--blue); color: #fff; border-radius: 50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; margin-top:1px; }
+.hero-btns .btn-primary,
+.hero-btns .btn-secondary {
+  padding: 11px 22px;
+  font-size: 14px;
+}
+
+/* Enquiry card shrinks to fit the shorter hero */
+.enquiry-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  position: relative;
+  max-height: 68vh;
+  
+}
+
+.enquiry-card h3 { font-size: 16px; margin-bottom: 3px; }
+.enquiry-card p { font-size: 11.5px; margin-bottom: 12px; }
+.form-group { margin-bottom: 9px; }
+.form-group label { font-size: 10px; margin-bottom: 3px; }
+.form-group input, .form-group select { padding: 8px 11px; font-size: 12.5px; }
+.form-consent { font-size: 10.5px; margin-bottom: 10px; }
+.form-submit { padding: 10px; font-size: 13px; }
+.enquiry-card p {
+  text-shadow: none !important;
+  color: #6b7280 !important;
+}
+@media (max-width: 960px) {
+  .hero { min-height: auto; padding: 50px 20px; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .enquiry-card { max-height: none; }
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg,
+    rgba(0,0,0,.72) 0%,
+    rgba(0,0,0,.55) 38%,
+    rgba(0,0,0,.30) 65%,
+    rgba(0,0,0,.15) 100%);
+  z-index: 1;
+}
+
+.hero::before,
+.hero::after {
+  display: none; /* remove the blue/red radial glows entirely */
+}
+/* ── INTRO ABOUT (placed right after hero) ── */
+.intro-about { background: #fff; position: relative; overflow: hidden; }
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* ── Image collage block ── */
+.intro-collage {
+  position: relative;
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+
+.intro-shape {
+  position: absolute;
+  top: -28px;
+  left: -28px;
+  width: 140px;
+  height: 140px;
+  background: rgba(76,121,220,.12);
+  border-radius: 30px;
+  z-index: 0;
+  transform: rotate(0deg);
+  animation: introShapeFloat 7s ease-in-out infinite;
+  transition: transform 1.2s ease;
+}
+
+@keyframes introShapeFloat {
+  0%   { transform: translate(0,0) rotate(0deg); }
+  25%  { transform: translate(8px,-10px) rotate(8deg); }
+  50%  { transform: translate(-4px,6px) rotate(-4deg); }
+  75%  { transform: translate(6px,4px) rotate(6deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
+
+.intro-photo-main {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(4,51,89,.18);
+  position: relative;
+  z-index: 1;
+  transition: transform .5s ease, box-shadow .5s ease;
+}
+.intro-photo-main img {
+  width: 100%; display: block; height: 230px; object-fit: cover;
+  transition: transform .6s ease;
+}
+
+.intro-photo-sign {
+  margin-top: -38px; margin-left: 36px; width: calc(100% - 36px);
+  border-radius: 14px; overflow: hidden; box-shadow: 0 18px 40px rgba(4,51,89,.18);
+  border: 5px solid #fff; position: relative; z-index: 2;
+  transition: transform .5s ease, box-shadow .5s ease;
+}
+.intro-photo-sign img {
+  width: 100%; display: block; height: 190px; object-fit: cover;
+  transition: transform .6s ease;
+}
+
+.intro-collage:hover .intro-photo-main { transform: translateY(-6px); box-shadow: 0 26px 54px rgba(4,51,89,.24); }
+.intro-collage:hover .intro-photo-main img { transform: scale(1.06); }
+.intro-collage:hover .intro-photo-sign { transform: translateY(-10px); box-shadow: 0 26px 54px rgba(4,51,89,.24); }
+.intro-collage:hover .intro-photo-sign img { transform: scale(1.06); }
+.intro-collage:hover .intro-shape { animation-play-state: paused; transform: rotate(12deg) scale(1.05); }
+
+.intro-badge {
+  position: absolute;
+  bottom: 14px;
+  right: -18px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 12px;
+  padding: 14px 18px;
+  text-align: center;
+  box-shadow: 0 14px 32px rgba(4,51,89,.35);
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  transition: opacity .6s ease .5s, transform .6s ease .5s;
+}
+.intro-badge strong {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #7eb5ff;
+  line-height: 1;
+}
+.intro-badge span {
+  font-size: 10.5px;
+  color: rgba(255,255,255,.75);
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+
+/* ── Text content block ── */
+.intro-content {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+.intro-content .section-label { margin-bottom: 8px; }
+.intro-content h2 {
+  font-family: 'Poppins',sans-serif; font-size: clamp(22px,3vw,32px); font-weight: 800;
+  color: var(--navy); margin-bottom: 16px; line-height: 1.25;
+}
+.intro-content p { font-size: 15px; color: var(--text-mid); line-height: 1.75; margin-bottom: 16px; }
+
+.intro-mini-stats {
+  display: flex;
+  gap: 24px;
+  margin: 22px 0 24px;
+  flex-wrap: wrap;
+}
+.mini-stat {
+  border-left: 3px solid var(--blue);
+  padding-left: 12px;
+}
+.mini-stat strong {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+}
+.mini-stat span {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.intro-content .btn-primary {
+  margin-top: 6px;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+.intro-content .btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.35) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-20deg);
+  transition: left .6s ease;
+}
+.intro-content .btn-primary:hover::before { left: 125%; }
+
+/* ── Scroll-triggered reveal state (JS adds .in-view) ── */
+.intro-about.in-view .section-label,
+.intro-about.in-view .intro-collage,
+.intro-about.in-view .intro-content,
+.intro-about.in-view .intro-badge {
+  opacity: 1;
+  transform: none;
+}
+.intro-about.in-view .intro-badge { transform: translateY(0) scale(1); }
+
+@media (max-width: 960px) {
+  .intro-grid { grid-template-columns: 1fr; gap: 40px; }
+  .intro-collage { max-width: 460px; margin: 0 auto; }
+  .intro-content { transform: translateY(30px); }
+  .intro-about.in-view .intro-content { transform: none; }
+}
+
+@media (max-width: 600px) {
+  .intro-badge { right: 4px; padding: 10px 14px; }
+  .intro-badge strong { font-size: 18px; }
+  .intro-mini-stats { gap: 16px; }
+}
+
+    /* ── TRUST STRIP ── */
+    .trust-strip {
+      background: var(--light-bg); padding: 18px 20px; border-bottom: 1px solid var(--border);
+    }
+    .trust-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: center; gap: 36px; flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--navy);
+    }
+    .trust-item .icon { font-size: 18px; }
+/* ── SECTION COMMONS ── */
+.section { padding: 72px 20px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-label {
+  display: inline-block; background: rgba(76,121,220,.1); color: var(--blue);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
+}
+.section-title {
+  font-family: 'Poppins',sans-serif; font-size: clamp(22px,3vw,34px); font-weight: 800;
+  color: var(--navy); line-height: 1.25; margin-bottom: 12px;
+}
+.section-sub { font-size: 16px; color: var(--text-light); line-height: 1.7; max-width: 600px; }
+.text-center { text-align: center; }
+.text-center .section-sub { margin: 0 auto; }
+
+/* ── PREVENT GLOBAL SECTION STYLES BLEEDING INTO PROGRAMS SECTION ── */
+.programs-section .section-label,
+.programs-section .section-title,
+.programs-section .section-sub {
+  all: unset;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROGRAMS SECTION — SCOPED CSS (no global class collisions)
+   All classes prefixed with .programs-section to avoid leakage
+═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --ps-navy: #043359;
+  --ps-blue: #1a6fd4;
+  --ps-border: rgba(4,51,89,0.13);
+  --ps-light-bg: #f4f7fb;
+  --ps-text-mid: #4a5568;
+}
+
+/* ── WRAPPER ── */
+.programs-section {
+  min-height: unset;
+  height: auto;
+  padding: 48px 48px 52px;
+  background: #f0f5fb;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.programs-section::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: -80px;
+  width: 340px; height: 340px;
+  background: radial-gradient(circle, rgba(26,111,212,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  animation: blobDrift 14s ease-in-out infinite;
+}
+.programs-section::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(4,51,89,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  animation: blobDrift 16s ease-in-out infinite reverse;
+}
+@keyframes blobDrift {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(24px,18px) scale(1.12); }
+}
+
+/* ── HEADER ── */
+.programs-section__header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 32px;
+  position: relative;
+  z-index: 1;
+  /* Reset any inherited spacing from global .section styles */
+  padding: 0;
+}
+
+/* Scoped eyebrow — avoids collision with global .section-label */
+.programs-section__eyebrow {
+  display: inline-block;
+  background: rgba(26,111,212,0.1);
+  color: #1a6fd4;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
+/* Scoped heading — avoids collision with global .section-title */
+.programs-section__heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  color: #043359;
+  line-height: 1.2;
+  margin: 0 0 12px 0;  /* explicit 0 top margin */
+  padding: 0;
+}
+.programs-section__heading span { color: #1a6fd4; }
+
+/* Scoped sub — avoids collision with global .section-sub */
+.programs-section__sub {
+  font-size: 14.5px;
+  color: #5a6a7a;
+  line-height: 1.7;
+  margin: 0 0 14px 0;
+  padding: 0;
+  max-width: 100%;  /* override any global max-width */
+}
+
+.programs-section__divider {
+  width: 48px;
+  height: 4px;
+  background: linear-gradient(90deg, #1a6fd4, #0e8fa8);
+  border-radius: 2px;
+  margin: 0 auto;
+}
+
+/* ── CARDS GRID ── */
+.programs-grid {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 22px;
+  width: 100%;
+  max-width: 1160px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── CARD SHELL ── */
+.prog-card {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 16px;
+  perspective: 1800px;
+  cursor: pointer;
+  /* KEY FIX: don't set a fixed height — let content define it */
+  height: auto;
+  min-height: unset;
+  position: relative;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.programs-section.in-view .prog-card { opacity: 1; transform: translateY(0); }
+.programs-section.in-view .prog-card:nth-child(1) { transition-delay: .05s; }
+.programs-section.in-view .prog-card:nth-child(2) { transition-delay: .15s; }
+.programs-section.in-view .prog-card:nth-child(3) { transition-delay: .25s; }
+
+/* Inner flipping container — needs explicit height */
+.prog-card-inner {
+  position: relative;
+  width: 100%;
+  /* height driven by the tallest face */
+  height: 100%;
+  min-height: 440px;
+  transition: transform 0.75s cubic-bezier(0.34, 1.2, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+.prog-card.flipped .prog-card-inner {
+  transform: rotateY(180deg);
+}
+
+.prog-card-front,
+.prog-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid var(--ps-border);
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(4,51,89,.07);
+  transition: box-shadow .3s, transform .15s;
+  /* Let content fill naturally */
+  display: flex;
+  flex-direction: column;
+}
+
+.prog-card:hover:not(.flipped) .prog-card-front {
+  box-shadow: 0 14px 44px rgba(26,111,212,.18);
+  transform: translateY(-4px);
+}
+
+.prog-card-front { transform: rotateY(0deg); }
+.prog-card-back  { transform: rotateY(180deg); }
+
+/* ── FRONT: TOP BANNER ── */
+.prog-card-top {
+  padding: 20px 20px 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #043359 0%, #0d5da6 100%);
+  flex-shrink: 0;
+}
+.prog-card-top.red-grad  { background: linear-gradient(135deg, #7b1212 0%, #c0392b 100%); }
+.prog-card-top.teal-grad { background: linear-gradient(135deg, #0a4d5e 0%, #0e8fa8 100%); }
+
+.prog-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.22);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.prog-card-top h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.22;
+  margin: 0;
+  padding: 0;
+  min-height: 42px;
+}
+
+.prog-card-top .abbr {
+  font-size: 12px;
+  color: rgba(255,255,255,.72);
+  margin-top: 3px;
+}
+
+/* ── FRONT: BODY ── */
+.prog-card-body {
+  padding: 16px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.prog-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.meta-item label {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.meta-item span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ps-navy);
+}
+
+.prog-fee {
+  background: var(--ps-light-bg);
+  border-radius: 9px;
+  padding: 10px 13px;
+  margin-bottom: 12px;
+  min-height: 78px;
+}
+
+.prog-fee .fee-label { font-size: 10.5px; color: #888; font-weight: 600; }
+.prog-fee .fee-val   { font-size: 20px; font-weight: 800; color: var(--ps-navy); }
+.prog-fee .fee-val span { font-size: 12px; font-weight: 500; color: #888; }
+.prog-fee .fee-save  { font-size: 10.5px; color: #1a9e5b; font-weight: 600; margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+
+.prog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.prog-tag {
+  background: rgba(26,111,212,.1);
+  color: #1558a8;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+}
+
+/* Buttons pushed to bottom of card */
+.prog-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.btn-enq {
+  flex: 1;
+  background: var(--ps-navy);
+  color: #fff;
+  border: none;
+  padding: 10px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background .2s, transform .15s;
+}
+.btn-enq:hover  { background: #062d50; transform: scale(1.02); }
+.btn-enq:active { transform: scale(0.97); }
+
+.btn-brochure {
+  flex: 1;
+  background: transparent;
+  color: var(--ps-blue);
+  border: 1.5px solid var(--ps-blue);
+  padding: 10px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+}
+.btn-brochure:hover { background: var(--ps-blue); color: #fff; }
+
+/* ── BACK: TOP BANNER ── */
+.prog-card-back-top {
+  padding: 18px 20px 14px;
+  color: #fff;
+  background: linear-gradient(135deg, #043359 0%, #0d5da6 100%);
+  flex-shrink: 0;
+}
+.prog-card-back-top.red-grad  { background: linear-gradient(135deg, #7b1212 0%, #c0392b 100%); }
+.prog-card-back-top.teal-grad { background: linear-gradient(135deg, #0a4d5e 0%, #0e8fa8 100%); }
+
+.prog-card-back-top h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+.prog-card-back-top p {
+  font-size: 11px;
+  color: rgba(255,255,255,.72);
+  margin-top: 3px;
+  margin-bottom: 0;
+}
+
+/* ── BACK: CONTENT ── */
+.prog-card-back-content {
+  padding: 14px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.prog-detail-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.prog-detail-list li {
+  font-size: 11.5px;
+  color: var(--ps-text-mid);
+  line-height: 1.5;
+  padding: 7px 10px;
+  border-left: 3px solid var(--ps-blue);
+  background: #f8fafd;
+  border-radius: 0 7px 7px 0;
+}
+
+.prog-detail-list li strong {
+  display: block;
+  color: var(--ps-navy);
+  font-size: 10.5px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+.btn-back {
+  margin-top: 11px;
+  width: 100%;
+  background: transparent;
+  color: var(--ps-navy);
+  border: 1.5px solid var(--ps-border);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  flex-shrink: 0;
+  transition: all .2s;
+}
+.btn-back:hover { background: var(--ps-light-bg); border-color: var(--ps-blue); color: var(--ps-blue); }
+
+/* ── BOTTOM CTA STRIP ── */
+.section-cta-strip {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1.5px solid rgba(4,51,89,0.1);
+  border-radius: 14px;
+  padding: 18px 26px;
+  gap: 20px;
+  width: 100%;
+  max-width: 1160px;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-strip-text h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #043359;
+  margin: 0 0 3px 0;
+}
+.cta-strip-text p {
+  font-size: 13px;
+  color: #5a6a7a;
+  margin: 0;
+}
+
+.cta-strip-actions { display: flex; gap: 12px; flex-shrink: 0; }
+
+.btn-cta-primary {
+  background: #043359;
+  color: #fff;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background .2s, transform .15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-cta-primary:hover { background: #062d50; transform: translateY(-1px); }
+
+.btn-cta-outline {
+  background: transparent;
+  color: #1a6fd4;
+  border: 1.5px solid #1a6fd4;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all .2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-cta-outline:hover { background: #1a6fd4; color: #fff; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .programs-section { padding: 40px 20px 44px; min-height: unset; }
+  .programs-section__heading { font-size: 26px; }
+  .programs-grid { flex-direction: column; }
+  .prog-card-inner { min-height: 420px; }
+  .section-cta-strip { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .programs-section { padding: 32px 14px 36px; }
+  .programs-section__heading { font-size: 22px; }
+  .cta-strip-actions { flex-direction: column; width: 100%; }
+  .btn-cta-primary, .btn-cta-outline { justify-content: center; }
+}
 
   /* ── FEATURES ── */
   .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 44px; }
-  .feat-card { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 28px 24px; transition: box-shadow .25s; }
-  .feat-card:hover { box-shadow: 0 8px 30px rgba(76,121,220,.12); }
+  .feat-card { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 28px 24px; transition: box-shadow .25s, transform .25s; opacity:0; transform: translateY(20px); }
+  .feat-card.feat-visible { opacity: 1; transform: translateY(0); transition: opacity .6s ease, transform .6s ease, box-shadow .25s; }
+  .feat-card:hover { box-shadow: 0 8px 30px rgba(76,121,220,.12); transform: translateY(-4px); }
   .feat-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
   .feat-icon.blue { background: rgba(76,121,220,.1); }
   .feat-icon.red { background: rgba(237,50,55,.1); }
   .feat-icon.navy { background: rgba(4,51,89,.08); }
+  .feat-icon .aicon { width: 26px; height: 26px; }
   .feat-card h4 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px; font-family: 'Poppins',sans-serif; }
   .feat-card p { font-size: 13px; color: var(--text-light); line-height: 1.65; }
 
@@ -337,8 +1272,8 @@
     background: #fff; border: 1.5px solid var(--border); border-radius: 12px;
     padding: 24px 20px; text-align: center; transition: all .25s;
   }
-  .res-card:hover { border-color: var(--blue); box-shadow: 0 6px 24px rgba(76,121,220,.12); transform: translateY(-2px); }
-  .res-icon { font-size: 32px; margin-bottom: 10px; }
+  .res-card:hover { border-color: var(--blue); box-shadow: 0 6px 24px rgba(76,121,220,.12); transform: translateY(-4px); }
+  .res-icon { margin: 0 auto 12px; width: 40px; height: 40px; }
   .res-card h4 { font-size: 13px; font-weight: 700; color: var(--navy); }
 
   /* ── ACCREDITATION ── */
@@ -415,7 +1350,7 @@
   transform-style: preserve-3d;
 }
 .faq-item.open .faq-a-wrap {
-  max-height: 320px;
+  max-height: 1000px;
   transform: rotateX(0deg);
 }
 .faq-a {
@@ -440,26 +1375,27 @@
   }
   .btn-white:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.2); }
 
-  /* ── ADMISSION PROCESS ── */
-  .steps-grid {
-    display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; margin-top: 40px;
-    counter-reset: step;
-  }
-  .step-card {
-    background: #fff; border: 1.5px solid var(--border); border-radius: 12px;
-    padding: 22px 16px; text-align: center; position: relative;
-    counter-increment: step;
-  }
-  .step-card::before {
-    content: counter(step,'0'counter(step)); font-size: 11px; font-weight: 800;
-    color: var(--blue); background: rgba(76,121,220,.1); padding: 3px 8px; border-radius: 4px;
-    display: inline-block; margin-bottom: 10px;
-  }
-  .step-card h4 { font-size: 13px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   /* ── FOOTER ── */
-  footer { background: var(--navy); color: rgba(255,255,255,.75); padding: 52px 20px 24px; }
-  .footer-inner { max-width: 1200px; margin: 0 auto; }
+  footer { background: var(--navy); color: rgba(255,255,255,.75); padding: 52px 20px 24px; position: relative; overflow: hidden; }
+  .footer-orb {
+    position: absolute; border-radius: 50%; pointer-events: none; filter: blur(2px);
+  }
+  .footer-orb.o1 { width: 260px; height: 260px; left: -90px; top: -100px; background: radial-gradient(circle, rgba(76,121,220,.20) 0%, transparent 70%); animation: footerOrbDrift 18s ease-in-out infinite; }
+  .footer-orb.o2 { width: 320px; height: 320px; right: -120px; bottom: -140px; background: radial-gradient(circle, rgba(237,50,55,.14) 0%, transparent 70%); animation: footerOrbDrift 22s ease-in-out infinite reverse; }
+  .footer-orb.o3 { width: 180px; height: 180px; left: 45%; bottom: -90px; background: radial-gradient(circle, rgba(126,181,255,.16) 0%, transparent 70%); animation: footerOrbDrift 16s ease-in-out infinite; }
+  @keyframes footerOrbDrift {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(30px,-18px) scale(1.15); }
+  }
+  .footer-wave { position: absolute; left: 0; top: -1px; width: 100%; line-height: 0; transform: rotate(180deg); }
+  .footer-wave svg { width: 100%; height: 46px; display: block; }
+  .footer-wave path { animation: waveShift 9s ease-in-out infinite; }
+  @keyframes waveShift {
+    0%,100% { d: path("M0,40 C300,90 900,0 1200,50 L1200,0 L0,0 Z"); }
+  }
+  .footer-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
   .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; margin-bottom: 40px; }
   .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
   .footer-logo-icon { width: 40px; height: 40px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
@@ -469,15 +1405,24 @@
   .footer-desc { font-size: 13px; line-height: 1.7; max-width: 280px; }
   footer h5 { color: #fff; font-size: 13px; font-weight: 700; letter-spacing: .4px; margin-bottom: 14px; text-transform: uppercase; }
   footer ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  footer ul li a { font-size: 13px; color: rgba(255,255,255,.65); transition: color .2s; }
-  footer ul li a:hover { color: #fff; }
-  .footer-contact p { font-size: 13px; margin-bottom: 8px; }
+  footer ul li a { font-size: 13px; color: rgba(255,255,255,.65); transition: color .2s, transform .2s; display: inline-block; }
+  footer ul li a:hover { color: #fff; transform: translateX(4px); }
+  .footer-contact p { font-size: 13px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; }
   .footer-contact a { color: #7eb5ff; }
+  .footer-contact .aicon { margin-top: 1px; }
   .footer-bottom {
     border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 12px; flex-wrap: wrap; gap: 10px;
+    font-size: 12px; flex-wrap: wrap; gap: 10px; position: relative; z-index: 2;
   }
+  .footer-social { display: flex; gap: 10px; margin-top: 14px; }
+  .footer-social a {
+    width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.08);
+    display: flex; align-items: center; justify-content: center; transition: all .25s;
+    border: 1px solid rgba(255,255,255,.12);
+  }
+  .footer-social a:hover { background: var(--blue); transform: translateY(-3px) rotate(8deg); border-color: var(--blue); }
+  .footer-social .aicon { width: 16px; height: 16px; }
 
   /* ── FLOATING WA ── */
   .wa-btn {
@@ -485,8 +1430,39 @@
     background: #25d366; color: #fff; width: 56px; height: 56px;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
     font-size: 26px; box-shadow: 0 6px 20px rgba(0,0,0,.25); transition: transform .2s;
+    animation: waBob 2.6s ease-in-out infinite;
+  }
+  .wa-btn::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid #25d366; animation: iconPulseRing 2.2s ease-out infinite;
   }
   .wa-btn:hover { transform: scale(1.1); }
+  @keyframes waBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+  /* ── SCROLL PROGRESS RING ── */
+  .scroll-progress {
+    position: fixed; left: 24px; bottom: 24px; z-index: 997;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #fff; box-shadow: 0 6px 20px rgba(4,51,89,.22);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: none; padding: 0;
+  }
+  .scroll-progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .scroll-progress .sp-track { fill: none; stroke: var(--border); stroke-width: 4; }
+  .scroll-progress .sp-fill {
+    fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round;
+    stroke-dasharray: 138.2; stroke-dashoffset: 138.2;
+    transition: stroke-dashoffset .12s linear;
+  }
+  .scroll-progress .sp-label {
+    position: absolute; font-family: 'Poppins', sans-serif; font-size: 11px;
+    font-weight: 800; color: var(--navy);
+  }
+  .scroll-progress:hover { transform: scale(1.08); }
+  @media (max-width: 480px) {
+    .scroll-progress { left: 18px; bottom: 18px; width: 48px; height: 48px; }
+    .scroll-progress .sp-label { font-size: 10px; }
+  }
 
 .accred-carousel{ overflow:hidden; width:100%; margin-top:2rem; }
 .accred-track{
@@ -659,40 +1635,239 @@
   color:#1e293b;
   line-height:1.3;
 }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4,51,89,.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 26px;
+  box-shadow: 0 25px 70px rgba(0,0,0,.35);
+  max-width: 420px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(60px) scale(0.85);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+}
+
+.modal-overlay.active .modal-box {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.modal-close:hover { color: var(--red); }
+
+.modal-box h3 {
+  color: var(--navy);
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.modal-box p {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 18px;
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ADMISSION PROCESS — scroll-driven animated timeline
+   (inlined directly on the page, no fetch/runtime reconstruction)
+═══════════════════════════════════════════════════════════ */
+.adm3-section, .adm3-section *, .adm3-section *::before, .adm3-section *::after { box-sizing: border-box; }
+
+.adm3-section {
+  padding: 80px 20px 90px;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+.adm3-section::before {
+  content: '';
+  position: absolute; top: -100px; left: -120px;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,111,212,.08) 0%, transparent 70%);
+  animation: adm3Drift 17s ease-in-out infinite;
+  pointer-events: none;
+}
+.adm3-section::after {
+  content: '';
+  position: absolute; bottom: -120px; right: -100px;
+  width: 320px; height: 320px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(237,50,55,.06) 0%, transparent 70%);
+  animation: adm3Drift 21s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+@keyframes adm3Drift { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(22px,16px) scale(1.1); } }
+
+.adm3-head { text-align: center; max-width: 620px; margin: 0 auto 56px; position: relative; z-index: 1; }
+.adm3-label {
+  display: inline-block; background: rgba(76,121,220,.1); color: #1a6fd4;
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; font-family: 'Inter', sans-serif;
+}
+.adm3-title {
+  font-family: 'Poppins', sans-serif; font-size: clamp(22px,3vw,34px); font-weight: 800;
+  color: #043359; line-height: 1.25; margin-bottom: 8px;
+}
+.adm3-sub { font-size: 15px; color: #777; line-height: 1.7; font-family: 'Inter', sans-serif; }
+
+.adm3-timeline { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; padding-left: 56px; }
+.adm3-spine { position: absolute; top: 6px; bottom: 6px; left: 19px; width: 4px; background: #e6ecf7; border-radius: 4px; }
+.adm3-spine-fill {
+  position: absolute; top: 0; left: 0; width: 100%; height: 0%;
+  background: linear-gradient(180deg, #e63946, #1a6fd4, #0e8fa8, #2a9d8f, #e9c46a, #f4a261, #6a4c93);
+  border-radius: 4px;
+  transition: height .15s linear;
+}
+
+.adm3-row { position: relative; padding-bottom: 50px; opacity: 0; transform: translateX(-22px); transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1); }
+.adm3-row:last-child { padding-bottom: 0; }
+.adm3-row.in-view { opacity: 1; transform: translateX(0); }
+
+.adm3-dot {
+  position: absolute; left: -56px; top: 0;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #fff; border: 3px solid #d8e1f3; color: #9aa6bd;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 14px;
+  transition: border-color .4s, color .4s, background .4s, box-shadow .4s, transform .4s cubic-bezier(.34,1.6,.64,1);
+  z-index: 2;
+}
+.adm3-row.in-view .adm3-dot {
+  border-color: var(--c, #1a6fd4); color: #fff; background: var(--c, #1a6fd4);
+  box-shadow: 0 6px 18px rgba(4,51,89,.18); transform: scale(1.08);
+  animation: adm3DotSettle .5s ease-out;
+}
+@keyframes adm3DotSettle { 0% { transform: scale(.4) rotate(-25deg); } 60% { transform: scale(1.18) rotate(4deg); } 100% { transform: scale(1.08) rotate(0); } }
+
+.adm3-card { background: #fff; border: 1.5px solid #e6ecf7; border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 20px rgba(4,51,89,.06); transition: box-shadow .35s, transform .35s, border-color .35s; }
+.adm3-row.in-view .adm3-card { border-color: var(--c, #1a6fd4); box-shadow: 0 14px 34px rgba(4,51,89,.12); }
+.adm3-card:hover { transform: translateY(-3px); }
+
+.adm3-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.adm3-card-icon {
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  background: var(--c, #1a6fd4);
+  transform: scale(.5); opacity: 0;
+  transition: transform .45s cubic-bezier(.34,1.6,.64,1) .15s, opacity .4s ease .15s;
+}
+.adm3-row.in-view .adm3-card-icon { transform: scale(1); opacity: 1; }
+.adm3-card-icon svg { width: 20px; height: 20px; }
+.adm3-card-eyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #9aa6bd; }
+.adm3-card-title { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 16.5px; color: #043359; }
+.adm3-card-desc { font-size: 13.8px; color: #56657d; line-height: 1.65; }
+
+.adm3-end { margin-top: 8px; margin-left: -56px; padding-left: 56px; display: flex; align-items: center; gap: 14px; opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+.adm3-end.in-view { opacity: 1; transform: translateY(0); }
+.adm3-end-dot {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; margin-left: -56px;
+  background: linear-gradient(135deg, #1a9e5b, #16895a);
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  box-shadow: 0 8px 20px rgba(26,158,91,.3);
+}
+.adm3-end-dot svg { width: 18px; height: 18px; }
+.adm3-end-text strong { display: block; color: #043359; font-family: 'Poppins', sans-serif; font-size: 14.5px; }
+.adm3-end-text span { font-size: 12.5px; color: #8a93a6; }
+
+@media (max-width: 600px) {
+  .adm3-timeline { padding-left: 44px; }
+  .adm3-spine { left: 15px; }
+  .adm3-dot { left: -44px; width: 34px; height: 34px; font-size: 12.5px; }
+  .adm3-end-dot { margin-left: -44px; width: 34px; height: 34px; }
+}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="top-bar">
-  <div class="inner">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <span class="admission-badge">🔴 Admissions Open 2025–26</span>
-      <a href="mailto:admission@guniol.com">📧 admission@guniol.com</a>
-      <a href="tel:9240271367">📞 9240271367</a>
+  <div class="inner" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+    <span class="admission-badge"><span class="aicon" style="width:9px;height:9px;background:#fff;border-radius:50%;animation:iconBlink 1.4s infinite;"></span> Admissions Open 2025–26</span>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <a href="mailto:admission@guniol.com">
+        <span class="aicon" style="width:14px;height:14px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M3 6l9 7 9-7"/></svg>
+        </span> admission@guniol.com
+      </a>
+      <a href="tel:9240271367">
+        <span class="aicon" style="width:14px;height:14px; animation: iconWiggle 1.8s ease-in-out infinite;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.5 2.5.8 3.8.8.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.4 22 2 13.6 2 3c0-.6.4-1 1-1h4c.6 0 1 .4 1 1 0 1.3.3 2.6.8 3.8.1.4.1.8-.2 1.1z"/></svg>
+        </span> +91 9240271367
+      </a>
     </div>
-
   </div>
 </div>
 
 <!-- NAVBAR -->
+<!-- NAVBAR -->
 <nav>
   <div class="nav-inner">
-    <div class="logo">
-      <img src="assets/img/logo_2020.png" alt="Ganpat University Online Logo" style="height: 48px; width: auto;" />
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div class="logo">
+        <a href="index.html" aria-label="Ganpat University Online - Home">
+          <img src="assets/img/logo_2020.png" alt="Ganpat University Online Logo" style="height: 48px; width: auto;" />
+        </a>
+      </div>
+
+      <!-- ACCREDITATION LOGO SLIDER -->
+      <div class="accreditation-slider">
+        <img src="assets/logo/naac.jpg" alt="NAAC" class="accred-logo active" />
+        <img src="assets/logo/Institution's Innovation Council.png" alt="Institution's Innovation Council" class="accred-logo" />
+        <img src="assets/logo/Center-of-excellence.png" alt="Centre of Excellence" class="accred-logo" />
+        <img src="assets/logo/GSIRF.png" alt="GSIRF" class="accred-logo" />
+        <img src="assets/logo/care edge.png" alt="CARE" class="accred-logo" />
+      </div>
     </div>
+
     <ul class="nav-links">
       <li><a href="#">Home</a></li>
       <li><a href="#about-intro">About Us</a></li>
-      <li><a href="#programs">Programs</a></li
-      <li><a href="#fees">Fees</a></li>
+      <li><a href="#programs">Programs</a></li>
+      <li><a href="#programs">Fees</a></li>
       <li><a href="#faq">FAQs</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <a href="#" target="_blank" class="nav-cta">Apply Now →</a>
   </div>
 </nav>
-
 <!-- HERO -->
 <section class="hero" style="background-image: url('assets/img/hero-banner.png');">
 
@@ -750,18 +1925,31 @@
   <div class="section-inner">
     <div class="intro-grid">
       <div class="intro-collage">
+        <div class="intro-shape"></div>
         <div class="intro-photo-main">
           <img src="assets/img/12.jpg" alt="Ganpat University Campus Building">
         </div>
         <div class="intro-photo-sign">
           <img src="assets/img/13.jpg" alt="GUNI Campus Sign">
         </div>
+        <div class="intro-badge">
+          <strong>20+</strong>
+          <span>Years of Legacy</span>
+        </div>
       </div>
+
       <div class="intro-content">
         <span class="section-label">Ganpat University</span>
         <h2>Bringing Premier Education to Your Doorstep</h2>
         <p>Ganpat University and the township of Ganpat Vidyanagar, a high-tech education campus, is a joint initiative — purely philanthropic in nature — by a large number of industrialists and technocrats, noble farmers and affluent businessmen for the mission of "Social Upliftment through Education." The University was established by the State Government by enactment of Act No. 19/2005 on 12th April 2005, and is approved under Section 2(f) by the University Grants Commission (UGC).</p>
         <p>In consideration of its contribution to education in a short span of time, the University has been given Permanent Membership in renowned academic and industry associations, such as the Association of Indian Universities (AIU) and the Association of Commonwealth Universities (ACU).</p>
+
+        <div class="intro-mini-stats">
+          <div class="mini-stat"><strong>2(f)</strong><span>UGC Approved</span></div>
+          <div class="mini-stat"><strong>AIU</strong><span>Permanent Member</span></div>
+          <div class="mini-stat"><strong>ACU</strong><span>Permanent Member</span></div>
+        </div>
+
         <a href="#about" class="btn-primary">Read More →</a>
       </div>
     </div>
@@ -769,7 +1957,7 @@
 </section>
 
 <!-- ACCREDITATION -->
-<section class="section accred-section">
+<section class="section accred-section" id="accreditations">
   <div class="section-inner">
     <div class="text-center">
       <span class="section-label">Quality Assurance</span>
@@ -786,7 +1974,7 @@
         <div class="accred-card"><img src="assets/logo/5.jfif" alt="Ministry of Shipping"><span>Ministry of Shipping, GoI</span></div>
         <div class="accred-card"><img src="assets/logo/6.jfif" alt="AICTE"><span>Directorate General of Shipping</span></div>
         <div class="accred-card"><img src="assets/logo/7.jpg" alt="DSIR"><span>DSIR, Govt of India</span></div>
-        <div class="accred-card"><img src="assets/logo/9.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
+        <div class="accred-card"><img src="assets/logo/naac.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
 
         <!-- duplicate set for seamless loop -->
         <div class="accred-card"><img src="assets/logo/1.png" alt="UGC"><span>University Grants Commission</span></div>
@@ -796,121 +1984,209 @@
         <div class="accred-card"><img src="assets/logo/5.jfif" alt="Ministry of Shipping"><span>Ministry of Shipping, GoI</span></div>
         <div class="accred-card"><img src="assets/logo/6.jfif" alt="AICTE"><span>Directorate General of Shipping</span></div>
         <div class="accred-card"><img src="assets/logo/7.jpg" alt="DSIR"><span>DSIR, Govt of India</span></div>
-        <div class="accred-card"><img src="assets/logo/9.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
+        <div class="accred-card"><img src="assets/logo/naac.jpg" alt="NAAC"><span>NAAC 'A' Accredited</span></div>
       </div>
     </div>
   </div>
 </section>
 <!-- TRUST STRIP -->
+ 
+<section class="programs-section" id="programs">
 
-<!-- PROGRAMS -->
-<section class="section" id="programs">
-  <div class="section-inner">
-    <div class="text-center">
-      <span class="section-label">Our Programs</span>
-      <h2 class="section-title">Online Degree Programs</h2>
-      <p class="section-sub">Flexible, UGC-approved online degrees designed to advance your education and career from anywhere in India.</p>
+  <!-- SECTION HEADER — uses scoped class names to avoid CSS collision -->
+  <div class="programs-section__header">
+    <div class="programs-section__eyebrow">Our Programs</div>
+    <h2 class="programs-section__heading">
+      Learn at Your Own Pace,<br><span>From Anywhere in India</span>
+    </h2>
+    <p class="programs-section__sub">
+      UGC-entitled online degrees from Ganpat University — fully accredited,
+      industry-aligned, and designed for working professionals and fresh graduates alike.
+    </p>
+    <div class="programs-section__divider"></div>
+  </div>
+
+  <!-- CARDS GRID -->
+  <div class="programs-grid">
+
+    <!-- CARD 1: BBA -->
+    <div class="prog-card" id="card-bba">
+      <div class="prog-card-inner">
+        <div class="prog-card-front">
+          <div class="prog-card-top">
+            <div class="prog-badge">Undergraduate · 3 Years</div>
+            <h3>Bachelor of Business Administration</h3>
+            <div class="abbr">BBA Online</div>
+          </div>
+          <div class="prog-card-body">
+            <div class="prog-meta">
+              <div class="meta-item"><label>Duration</label><span>3 Years</span></div>
+              <div class="meta-item"><label>Mode</label><span>100% Online</span></div>
+              <div class="meta-item"><label>Eligibility</label><span>10+2 / HSC</span></div>
+              <div class="meta-item"><label>Max Duration</label><span>6 Years</span></div>
+            </div>
+            <div class="prog-fee">
+              <div class="fee-label">Annual Fee</div>
+              <div class="fee-val">₹30,500 <span>/ year</span></div>
+              <div class="fee-save"><span class="aicon" style="width:13px;height:13px;color:#1a9e5b;animation:iconBeat 1.8s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="11" text-anchor="middle" fill="#fff" font-family="Arial">₹</text></svg></span> Save 20% — Pay full ₹77,300 (instead of ₹90,500)</div>
+            </div>
+            <div class="prog-tags">
+              <span class="prog-tag">Finance</span>
+              <span class="prog-tag">Marketing</span>
+              <span class="prog-tag">Int'l Business</span>
+              <span class="prog-tag">HR</span>
+            </div>
+            <div class="prog-btns">
+              <button class="btn-enq" onclick="event.stopPropagation(); document.getElementById('card-bba').classList.add('flipped')">View More Details</button>
+              <a href="https://guniol.com/assets/pdf/bba-brochure-gu.pdf" target="_blank" class="btn-brochure" onclick="event.stopPropagation()">Brochure</a>
+            </div>
+          </div>
+        </div>
+        <div class="prog-card-back">
+          <div class="prog-card-back-top">
+            <h3>BBA — Program Details</h3>
+            <p>Bachelor of Business Administration</p>
+          </div>
+          <div class="prog-card-back-content">
+            <ul class="prog-detail-list">
+              <li><strong>Eligibility</strong>Passed HSC or 10+2 from any recognized board</li>
+              <li><strong>Learning Mode</strong>Pre-recorded video lectures + live sessions + LMS access</li>
+              <li><strong>E-Content</strong>eBooks, case studies, presentation slides — self-paced</li>
+              <li><strong>Assessment</strong>Assignments, quizzes, MCQs, model papers online</li>
+              <li><strong>Discussion</strong>Peer forums, faculty mentorship, live Q&A sessions</li>
+              <li><strong>Career Paths</strong>Business analyst, marketing executive, HR associate</li>
+            </ul>
+            <button class="btn-back" onclick="event.stopPropagation(); document.getElementById('card-bba').classList.remove('flipped')">← Back to Overview</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="programs-grid">
 
-      <!-- BBA -->
-      <div class="prog-card">
-        <div class="prog-card-top">
-          <div class="prog-badge">Undergraduate · 3 Years</div>
-          <h3>Bachelor of Business Administration</h3>
-          <div class="abbr">BBA Online</div>
+    <!-- CARD 2: MBA -->
+    <div class="prog-card" id="card-mba">
+      <div class="prog-card-inner">
+        <div class="prog-card-front">
+          <div class="prog-card-top red-grad">
+            <div class="prog-badge">Postgraduate · 2 Years</div>
+            <h3>Master of Business Administration</h3>
+            <div class="abbr">MBA Online</div>
+          </div>
+          <div class="prog-card-body">
+            <div class="prog-meta">
+              <div class="meta-item"><label>Duration</label><span>2 Years</span></div>
+              <div class="meta-item"><label>Mode</label><span>100% Online</span></div>
+              <div class="meta-item"><label>Eligibility</label><span>Bachelor's Degree</span></div>
+              <div class="meta-item"><label>Min. Marks</label><span>50% Aggregate</span></div>
+            </div>
+            <div class="prog-fee">
+              <div class="fee-label">Annual Fee</div>
+              <div class="fee-val">₹35,000 <span>/ year</span></div>
+              <div class="fee-save"><span class="aicon" style="width:13px;height:13px;color:#1a9e5b;animation:iconBeat 1.8s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="11" text-anchor="middle" fill="#fff" font-family="Arial">₹</text></svg></span> Early bird discount available</div>
+            </div>
+            <div class="prog-tags">
+              <span class="prog-tag">Finance</span>
+              <span class="prog-tag">Marketing</span>
+              <span class="prog-tag">Operations</span>
+              <span class="prog-tag">Strategy</span>
+            </div>
+            <div class="prog-btns">
+              <button class="btn-enq" onclick="event.stopPropagation(); document.getElementById('card-mba').classList.add('flipped')">View More Details</button>
+              <a href="https://guniol.com/assets/pdf/bba-brochure-gu.pdf" target="_blank" class="btn-brochure" onclick="event.stopPropagation()">Brochure</a>
+            </div>
+          </div>
         </div>
-        <div class="prog-card-body">
-          <div class="prog-meta">
-            <div class="meta-item"><label>Duration</label><span>3 Years</span></div>
-            <div class="meta-item"><label>Mode</label><span>100% Online</span></div>
-            <div class="meta-item"><label>Eligibility</label><span>10+2 / HSC</span></div>
-            <div class="meta-item"><label>Max Duration</label><span>6 Years</span></div>
+        <div class="prog-card-back">
+          <div class="prog-card-back-top red-grad">
+            <h3>MBA — Program Details</h3>
+            <p>Master of Business Administration</p>
           </div>
-          <div class="prog-fee">
-            <div class="fee-label">Annual Fee</div>
-            <div class="fee-val">₹30,500 <span>/ year</span></div>
-            <div class="fee-save">💰 Save 20% — Pay full ₹77,300 (instead of ₹90,500)</div>
-          </div>
-          <div class="prog-tags">
-            <span class="prog-tag">Finance</span>
-            <span class="prog-tag">Marketing</span>
-            <span class="prog-tag">International Business</span>
-            <span class="prog-tag">HR</span>
-          </div>
-          <div class="prog-btns">
-            <button class="btn-enq" onclick="document.getElementById('enquiry-form').scrollIntoView({behavior:'smooth'})">Enquire Now</button>
-            <a href="https://guniol.com/assets/pdf/bba-brochure-gu.pdf" target="_blank" class="btn-brochure">Brochure</a>
+          <div class="prog-card-back-content">
+            <ul class="prog-detail-list">
+              <li><strong>Eligibility</strong>Bachelor's from any recognized university, 50% aggregate (45% reserved)</li>
+              <li><strong>Duration</strong>2 years full program, 100% online delivery</li>
+              <li><strong>Learning Mode</strong>Pre-recorded lectures + live sessions + whiteboard explanations</li>
+              <li><strong>E-Content</strong>Digitized reading materials, summaries, glossaries, infographics</li>
+              <li><strong>Assessment</strong>Quizzes, MCQs, assignments with immediate feedback</li>
+              <li><strong>Discussion</strong>Webinars, virtual classrooms, peer-to-peer forums</li>
+              <li><strong>Career Paths</strong>Manager, business strategist, consultant, entrepreneur</li>
+            </ul>
+            <button class="btn-back" onclick="event.stopPropagation(); document.getElementById('card-mba').classList.remove('flipped')">← Back to Overview</button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- MBA -->
-      <div class="prog-card">
-        <div class="prog-card-top red-grad">
-          <div class="prog-badge">Postgraduate · 2 Years</div>
-          <h3>Master of Business Administration</h3>
-          <div class="abbr">MBA Online</div>
+    <!-- CARD 3: MCA -->
+    <div class="prog-card" id="card-mca">
+      <div class="prog-card-inner">
+        <div class="prog-card-front">
+          <div class="prog-card-top teal-grad">
+            <div class="prog-badge">Postgraduate · 2 Years</div>
+            <h3>Master of Computer Applications</h3>
+            <div class="abbr">MCA Online</div>
+          </div>
+          <div class="prog-card-body">
+            <div class="prog-meta">
+              <div class="meta-item"><label>Duration</label><span>2 Years</span></div>
+              <div class="meta-item"><label>Mode</label><span>100% Online</span></div>
+              <div class="meta-item"><label>Eligibility</label><span>Graduation</span></div>
+              <div class="meta-item"><label>Min. Marks</label><span>50% Aggregate</span></div>
+            </div>
+            <div class="prog-fee">
+              <div class="fee-label">Annual Fee</div>
+              <div class="fee-val">₹40,000 <span>/ year</span></div>
+              <div class="fee-save"><span class="aicon" style="width:13px;height:13px;color:#1a9e5b;animation:iconBeat 1.8s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/><text x="12" y="16" font-size="11" text-anchor="middle" fill="#fff" font-family="Arial">₹</text></svg></span> Early bird discount available</div>
+            </div>
+            <div class="prog-tags">
+              <span class="prog-tag">CS / IT</span>
+              <span class="prog-tag">BCA / B.Tech</span>
+              <span class="prog-tag">B.Sc-IT</span>
+              <span class="prog-tag">B.Com / BA</span>
+            </div>
+            <div class="prog-btns">
+              <button class="btn-enq" onclick="event.stopPropagation(); document.getElementById('card-mca').classList.add('flipped')">View More Details</button>
+              <a href="https://guniol.com/assets/pdf/bba-brochure-gu.pdf" target="_blank" class="btn-brochure" onclick="event.stopPropagation()">Brochure</a>
+            </div>
+          </div>
         </div>
-        <div class="prog-card-body">
-          <div class="prog-meta">
-            <div class="meta-item"><label>Duration</label><span>2 Years</span></div>
-            <div class="meta-item"><label>Mode</label><span>100% Online</span></div>
-            <div class="meta-item"><label>Eligibility</label><span>Bachelor's (50%)</span></div>
-            <div class="meta-item"><label>Max Duration</label><span>4 Years</span></div>
+        <div class="prog-card-back">
+          <div class="prog-card-back-top teal-grad">
+            <h3>MCA — Program Details</h3>
+            <p>Master of Computer Applications</p>
           </div>
-          <div class="prog-fee">
-            <div class="fee-label">Annual Fee</div>
-            <div class="fee-val">₹49,000 <span>/ year</span></div>
-            <div class="fee-save">📋 EMI &amp; loan options available</div>
-          </div>
-          <div class="prog-tags">
-            <span class="prog-tag">Finance</span>
-            <span class="prog-tag">Marketing</span>
-            <span class="prog-tag">Data Analytics</span>
-            <span class="prog-tag">HR</span>
-          </div>
-          <div class="prog-btns">
-            <button class="btn-enq" onclick="document.getElementById('enquiry-form').scrollIntoView({behavior:'smooth'})">Enquire Now</button>
-            <a href="https://guniol.com/assets/pdf/mba-brochure-gu.pdf" target="_blank" class="btn-brochure">Brochure</a>
+          <div class="prog-card-back-content">
+            <ul class="prog-detail-list">
+              <li><strong>Eligibility</strong>Graduates in CS, Engineering, BCA, B.Sc-IT or B.Com/BA with 50% marks (45% reserved)</li>
+              <li><strong>Math Bridge</strong>Non-math graduates can qualify via university bridge course</li>
+              <li><strong>Duration</strong>2 years full program, 100% online delivery</li>
+              <li><strong>Learning Mode</strong>Video lectures, live sessions, animated slides, real-life examples</li>
+              <li><strong>E-Content</strong>Case studies, eBooks, self-paced modules, infographics</li>
+              <li><strong>Assessment</strong>Assignments, MCQs, model papers with immediate feedback</li>
+              <li><strong>Career Paths</strong>Software developer, system analyst, IT consultant, data engineer</li>
+            </ul>
+            <button class="btn-back" onclick="event.stopPropagation(); document.getElementById('card-mca').classList.remove('flipped')">← Back to Overview</button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- MCA -->
-      <div class="prog-card">
-        <div class="prog-card-top blue-grad">
-          <div class="prog-badge">Postgraduate · 2 Years</div>
-          <h3>Master of Computer Application</h3>
-          <div class="abbr">MCA Online</div>
-        </div>
-        <div class="prog-card-body">
-          <div class="prog-meta">
-            <div class="meta-item"><label>Duration</label><span>2 Years</span></div>
-            <div class="meta-item"><label>Mode</label><span>100% Online</span></div>
-            <div class="meta-item"><label>Eligibility</label><span>Graduation (50%)</span></div>
-            <div class="meta-item"><label>Max Duration</label><span>4 Years</span></div>
-          </div>
-          <div class="prog-fee">
-            <div class="fee-label">Annual Fee</div>
-            <div class="fee-val">₹49,000 <span>/ year</span></div>
-            <div class="fee-save">💻 Java, Python, .NET, Big Data electives</div>
-          </div>
-          <div class="prog-tags">
-            <span class="prog-tag">Data Science</span>
-            <span class="prog-tag">Cloud Computing</span>
-            <span class="prog-tag">Software Dev</span>
-            <span class="prog-tag">Big Data</span>
-          </div>
-          <div class="prog-btns">
-            <button class="btn-enq" onclick="document.getElementById('enquiry-form').scrollIntoView({behavior:'smooth'})">Enquire Now</button>
-            <a href="https://guniol.com/assets/pdf/mca-brochure-gu.pdf" target="_blank" class="btn-brochure">Brochure</a>
-          </div>
-        </div>
-      </div>
+  </div>
 
+  <!-- BOTTOM CTA STRIP -->
+  <div class="section-cta-strip">
+    <div class="cta-strip-text">
+      <h4>Not sure which program is right for you?</h4>
+      <p>Talk to our academic counsellors — free guidance, no obligation.</p>
+    </div>
+    <div class="cta-strip-actions">
+      <a href="tel:+919714520498" class="btn-cta-primary">
+        <span class="aicon" style="width:14px;height:14px;animation:iconWiggle 1.8s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.5 2.5.8 3.8.8.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.4 22 2 13.6 2 3c0-.6.4-1 1-1h4c.6 0 1 .4 1 1 0 1.3.3 2.6.8 3.8.1.4.1.8-.2 1.1z"/></svg></span>
+        Call Us Now
+      </a>
+      <a href="#" target="_blank" class="btn-cta-outline">Visit Website →</a>
     </div>
   </div>
+
 </section>
 
 
@@ -925,32 +2201,59 @@
     </div>
     <div class="features-grid">
       <div class="feat-card">
-        <div class="feat-icon blue">🏛️</div>
+        <div class="feat-icon blue">
+          <span class="aicon" style="width:26px;height:26px;color:#4c79dc;animation:iconFloat 3s ease-in-out infinite;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6-9 6-9-6z"/><path d="M5 12v5c0 1 3 2 7 2s7-1 7-2v-5"/></svg>
+          </span>
+        </div>
         <h4>Academic Excellence</h4>
         <p>Rooted in Ganpat University's two-decade legacy of quality education and innovation across disciplines.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-icon red">✅</div>
+        <div class="feat-icon red">
+          <span class="aicon" style="width:26px;height:26px;color:#ed3237;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" stroke-dasharray="56" stroke-dashoffset="0" style="animation: iconRing 2.4s ease-in-out infinite;"/>
+              <path d="M8 12.5l2.7 2.7L16 9.6" style="animation: iconDash 1.6s ease-out 1 both;"/>
+            </svg>
+          </span>
+        </div>
         <h4>Accredited Programs</h4>
         <p>All courses approved by UGC for national academic recognition. Degrees valid for jobs and higher education in India and abroad.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-icon navy">👨‍🏫</div>
+        <div class="feat-icon navy">
+          <span class="aicon" style="width:26px;height:26px;color:#043359;animation:iconBob 2.6s ease-in-out infinite;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.3 3.1-6 7-6s7 2.7 7 6"/></svg>
+          </span>
+        </div>
         <h4>Expert Faculty</h4>
         <p>Teaching supported by experienced educators and industry specialists who bring real-world insights into learning.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-icon blue">💻</div>
+        <div class="feat-icon blue">
+          <span class="aicon" style="width:26px;height:26px;color:#4c79dc;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 21h8M12 17v4"/><circle cx="9.5" cy="11" r="1" fill="currentColor" stroke="none" style="animation: iconBlink 1.8s infinite;"/><circle cx="14.5" cy="11" r="1" fill="currentColor" stroke="none" style="animation: iconBlink 1.8s infinite .3s;"/></svg>
+          </span>
+        </div>
         <h4>Digital Learning Model</h4>
         <p>Structured online platform with interactive study resources — live sessions, recorded lectures, e-books, and more.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-icon red">🎧</div>
+        <div class="feat-icon red">
+          <span class="aicon" style="width:26px;height:26px;color:#ed3237;animation:iconWiggle 2.4s ease-in-out infinite;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 1116 0"/><path d="M4 13v3a2 2 0 002 2h0v-5H4z"/><path d="M20 13v3a2 2 0 01-2 2h0v-5h2z"/></svg>
+          </span>
+        </div>
         <h4>Student Support</h4>
         <p>Dedicated academic guidance, responsive digital assistance, and career counselling at every step of your journey.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-icon navy">🤝</div>
+        <div class="feat-icon navy">
+          <span class="aicon" style="width:26px;height:26px;color:#043359;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12a4 4 0 100-8 4 4 0 000 8z" style="animation: iconFloat 2.6s ease-in-out infinite;"/><path d="M17 12a4 4 0 100-8 4 4 0 000 8z" style="animation: iconFloat 2.6s ease-in-out infinite .4s;"/><path d="M2 20c0-3 2.5-5 5-5M22 20c0-3-2.5-5-5-5" /></svg>
+          </span>
+        </div>
         <h4>500+ Hiring Partners</h4>
         <p>Strong industry connections and placement support to help you land your dream role after graduation.</p>
       </div>
@@ -958,6 +2261,19 @@
   </div>
 </section>
 
+<!-- ADMISSION PROCESS -->
+<section class="adm3-section" id="admission">
+  <div class="adm3-head">
+    <span class="adm3-label">Admission Process</span>
+    <h2 class="adm3-title">Your Path to Enrolment</h2>
+    <p class="adm3-sub">Scroll down to follow the journey from first enquiry to confirmed seat.</p>
+  </div>
+
+  <div class="adm3-timeline" id="adm3Timeline">
+    <div class="adm3-spine"><div class="adm3-spine-fill" id="adm3SpineFill"></div></div>
+    <!-- rows injected by the script near the bottom of this page -->
+  </div>
+</section>
 
 <!-- LEARNING RESOURCES -->
 <section class="section" style="background:var(--light-bg);">
@@ -968,44 +2284,19 @@
       <p class="section-sub">Every registered student gets full access to these learning tools from day one.</p>
     </div>
     <div class="resources-grid">
-      <div class="res-card"><div class="res-icon">📚</div><h4>E-Books & Study Material</h4></div>
-      <div class="res-card"><div class="res-icon">📖</div><h4>Comprehensive Study Guides</h4></div>
-      <div class="res-card"><div class="res-icon">📝</div><h4>Practice Tests & Mock Exams</h4></div>
-      <div class="res-card"><div class="res-icon">💬</div><h4>Discussion Forums</h4></div>
-      <div class="res-card"><div class="res-icon">🌐</div><h4>Web Resources & References</h4></div>
-      <div class="res-card"><div class="res-icon">🎥</div><h4>Tutorial Recorded Videos</h4></div>
-      <div class="res-card"><div class="res-icon">🎙️</div><h4>Live Interactive Sessions</h4></div>
-      <div class="res-card"><div class="res-icon">🖥️</div><h4>Virtual Labs (MCA)</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;animation:iconFloat 3s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C5.5 4.5 8 4 11 4.5v15c-3-1-5.5-.5-7-.5z"/><path d="M20 5.5C18.5 4.5 16 4 13 4.5v15c3-1 5.5-.5 7-.5z"/></svg></span></div><h4>E-Books & Study Material</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 7h8M8 11h8M8 15h5" style="animation: iconDash 2s linear infinite; stroke-dasharray: 4 3;"/></svg></span></div><h4>Comprehensive Study Guides</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 8l2 2 4-4" style="animation: iconDash 1.6s ease-out infinite; stroke-dasharray:10 6;"/><path d="M8 16h8"/></svg></span></div><h4>Practice Tests & Mock Exams</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;animation:iconBob 2.8s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 11-3.8-7.1L21 3l-1 4.4"/><path d="M8 11h5M8 14h7"/></svg></span></div><h4>Discussion Forums</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;animation:iconSpinSlow 9s linear infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 010 18M12 3a13 13 0 000 18"/></svg></span></div><h4>Web Resources & References</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="11" rx="1.5"/><path d="M17 9l4-2.5v11L17 15"/><circle cx="10" cy="10.5" r="3" fill="currentColor" stroke="none" opacity=".15" style="animation: iconPulseRing 1.8s ease-out infinite;"/></svg></span></div><h4>Tutorial Recorded Videos</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;animation:iconWiggle 2.4s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6"/></svg></span></div><h4>Live Interactive Sessions</h4></div>
+      <div class="res-card"><div class="res-icon"><span class="aicon" style="width:36px;height:36px;color:#1a6fd4;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/><path d="M7 11l3-3 2 2 4-4" style="animation: iconDash 2s ease-in-out infinite; stroke-dasharray: 8 5;"/></svg></span></div><h4>Virtual Labs (MCA)</h4></div>
     </div>
   </div>
 </section>
 
-<!-- ADMISSION PROCESS -->
-<section class="section" style="background:#fff;">
-  <div class="section-inner">
-    <div class="text-center">
-      <span class="section-label">Admission Process</span>
-      <h2 class="section-title">Simple Steps to Enrol</h2>
-      <p class="section-sub">Your journey from enquiry to learning in easy steps.</p>
-    </div>
-
-    <div class="path-wrap" id="pathWrap">
-      <svg class="path-line" id="pathSvg"></svg>
-      <div class="path-steps" id="pathSteps">
-        <div class="path-step pos-down"><div class="path-num">1</div><h4>Enquiry Generation</h4></div>
-        <div class="path-step pos-up"><div class="path-num">2</div><h4>Student Counselling</h4></div>
-        <div class="path-step pos-down"><div class="path-num">3</div><h4>Application Form + DEB ID</h4></div>
-        <div class="path-step pos-up"><div class="path-num">4</div><h4>Upload Documents</h4></div>
-        <div class="path-step pos-down"><div class="path-num">5</div><h4>Document Verification</h4></div>
-        <div class="path-step pos-up"><div class="path-num">6</div><h4>Fee Payment Online</h4></div>
-        <div class="path-step pos-down"><div class="path-num">7</div><h4>Admission Confirmation</h4></div>
-        <div class="path-step pos-up"><div class="path-num">8</div><h4>Student Onboarding</h4></div>
-        <div class="path-step pos-down"><div class="path-num">9</div><h4>Login Credentials</h4></div>
-        <div class="path-step pos-up"><div class="path-num">10</div><h4>Learning Begins! 🎓</h4></div>
-      </div>
-    </div>
-  </div>
-</section>
+  
 
 <!-- TOP RECRUITERS -->
 <section class="section recruiters-section" id="top-recruiters">
@@ -1065,63 +2356,107 @@
     <div class="text-center">
       <span class="section-label">Have Questions?</span>
       <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-sub">Quick answers about admissions, fees and how online classes work.</p>
     </div>
-    <div class="faq-list">
-      <div class="faq-item open">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span class="q-text">Is Ganpat University Online UGC approved?</span>
-          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+
+    <div style="max-width:800px;margin:36px auto 0;display:flex;flex-direction:column;gap:14px;">
+
+      <!-- Card 1 -->
+      <div style="border-radius:12px;overflow:hidden;background:var(--light-bg);border:1px solid var(--border);border-top:4px solid var(--blue);box-shadow:0 2px 8px rgba(4,51,89,.06);transition:all .3s;" onmouseover="this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';this.querySelector('.faq-answer').style.maxHeight='400px';this.querySelector('.faq-answer').style.opacity='1';this.querySelector('.faq-answer').style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';" onmouseout="this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';this.querySelector('.faq-answer').style.maxHeight='0';this.querySelector('.faq-answer').style.opacity='0';this.querySelector('.faq-answer').style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';" ontouchstart="var a=this.querySelector('.faq-answer');var open=a.style.maxHeight!=='0px'&&a.style.maxHeight!=='';if(open){this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';a.style.maxHeight='0';a.style.opacity='0';a.style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';}else{this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';a.style.maxHeight='400px';a.style.opacity='1';a.style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';}">
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;">
+          <span class="faq-num" style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Poppins',sans-serif;color:var(--blue);flex-shrink:0;transition:all .3s;">1</span>
+          <span style="font-weight:600;color:var(--navy);flex:1;">Is Ganpat University Online UGC approved?</span>
+          <span class="faq-arr" style="color:#c7d3ec;font-size:20px;line-height:1;transition:all .3s;">›</span>
         </div>
-        <div class="faq-a-wrap"><div class="faq-a">Yes, Ganpat University Online is a UGC-approved online university authorised to offer online degree programs in India. All degrees awarded are fully recognised nationally and internationally.</div></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span class="q-text">What are the BBA fees and eligibility?</span>
-          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        <div class="faq-answer" style="max-height:0;opacity:0;overflow:hidden;padding:0 20px 0 64px;font-size:14px;color:var(--text-mid);line-height:1.7;transition:all .4s;">
+          Yes, Ganpat University Online is a UGC-approved online university authorised to offer online degree programs in India. All degrees awarded are fully recognised nationally and internationally.
         </div>
-        <div class="faq-a-wrap"><div class="faq-a">The Online BBA is a 3-year program with an annual fee of ₹30,500 (total ₹90,500). Eligibility: 10+2 / HSC from any recognised board. Pay full fee upfront and save 20% — pay just ₹77,300.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span class="q-text">What are the MBA fees and eligibility?</span>
-          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+
+      <!-- Card 2 -->
+      <div style="border-radius:12px;overflow:hidden;background:var(--light-bg);border:1px solid var(--border);border-top:4px solid var(--blue);box-shadow:0 2px 8px rgba(4,51,89,.06);transition:all .3s;" onmouseover="this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';this.querySelector('.faq-answer').style.maxHeight='400px';this.querySelector('.faq-answer').style.opacity='1';this.querySelector('.faq-answer').style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';" onmouseout="this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';this.querySelector('.faq-answer').style.maxHeight='0';this.querySelector('.faq-answer').style.opacity='0';this.querySelector('.faq-answer').style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';" ontouchstart="var a=this.querySelector('.faq-answer');var open=a.style.maxHeight!=='0px'&&a.style.maxHeight!=='';if(open){this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';a.style.maxHeight='0';a.style.opacity='0';a.style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';}else{this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';a.style.maxHeight='400px';a.style.opacity='1';a.style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';}">
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;">
+          <span class="faq-num" style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Poppins',sans-serif;color:var(--blue);flex-shrink:0;transition:all .3s;">2</span>
+          <span style="font-weight:600;color:var(--navy);flex:1;">What are the BBA fees and eligibility?</span>
+          <span class="faq-arr" style="color:#c7d3ec;font-size:20px;line-height:1;transition:all .3s;">›</span>
         </div>
-        <div class="faq-a-wrap"><div class="faq-a">The Online MBA is a 2-year program with an annual fee of ₹49,000 (total ₹98,000 for 2 years). Eligibility: Bachelor's degree from any recognised university with at least 50% aggregate marks (45% for reserved category).</div></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span class="q-text">What are the MCA fees and eligibility?</span>
-          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        <div class="faq-answer" style="max-height:0;opacity:0;overflow:hidden;padding:0 20px 0 64px;font-size:14px;color:var(--text-mid);line-height:1.7;transition:all .4s;">
+          The Online BBA is a 3-year program with an annual fee of ₹30,500 (total ₹90,500). Eligibility: 10+2 / HSC from any recognised board. Pay full fee upfront and save 20% — pay just ₹77,300.
         </div>
-        <div class="faq-a-wrap"><div class="faq-a">The Online MCA is a 2-year program with an annual fee of ₹49,000. Eligibility: Bachelor's degree in Computer Applications, Computer Science, or Mathematics with at least 50% marks.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span class="q-text">How are online classes conducted?</span>
-          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+
+      <!-- Card 3 -->
+      <div style="border-radius:12px;overflow:hidden;background:var(--light-bg);border:1px solid var(--border);border-top:4px solid var(--blue);box-shadow:0 2px 8px rgba(4,51,89,.06);transition:all .3s;" onmouseover="this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';this.querySelector('.faq-answer').style.maxHeight='400px';this.querySelector('.faq-answer').style.opacity='1';this.querySelector('.faq-answer').style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';" onmouseout="this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';this.querySelector('.faq-answer').style.maxHeight='0';this.querySelector('.faq-answer').style.opacity='0';this.querySelector('.faq-answer').style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';" ontouchstart="var a=this.querySelector('.faq-answer');var open=a.style.maxHeight!=='0px'&&a.style.maxHeight!=='';if(open){this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';a.style.maxHeight='0';a.style.opacity='0';a.style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';}else{this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';a.style.maxHeight='400px';a.style.opacity='1';a.style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';}">
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;">
+          <span class="faq-num" style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Poppins',sans-serif;color:var(--blue);flex-shrink:0;transition:all .3s;">3</span>
+          <span style="font-weight:600;color:var(--navy);flex:1;">What are the MBA fees and eligibility?</span>
+          <span class="faq-arr" style="color:#c7d3ec;font-size:20px;line-height:1;transition:all .3s;">›</span>
         </div>
-        <div class="faq-a-wrap"><div class="faq-a">Classes are delivered through an interactive Learning Management System (LMS) with recorded lectures, live sessions, e-content, practice tests, and virtual academic support available 24/7.</div></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span class="q-text">Is the online degree valid for jobs and higher studies?</span>
-          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+        <div class="faq-answer" style="max-height:0;opacity:0;overflow:hidden;padding:0 20px 0 64px;font-size:14px;color:var(--text-mid);line-height:1.7;transition:all .4s;">
+          The Online MBA is a 2-year program with an annual fee of ₹49,000 (total ₹98,000 for 2 years). Eligibility: Bachelor's degree from any recognised university with at least 50% aggregate marks (45% for reserved category).
         </div>
-        <div class="faq-a-wrap"><div class="faq-a">Yes. Degrees awarded by Ganpat University Online are valid for employment and higher education in India and abroad. The university is UGC-entitled and NAAC 'A' accredited.</div></div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span class="q-text">Are EMI or loan options available?</span>
-          <span class="arrow"><span class="arrow-face front">+</span><span class="arrow-face back">×</span></span>
+
+      <!-- Card 4 -->
+      <div style="border-radius:12px;overflow:hidden;background:var(--light-bg);border:1px solid var(--border);border-top:4px solid var(--blue);box-shadow:0 2px 8px rgba(4,51,89,.06);transition:all .3s;" onmouseover="this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';this.querySelector('.faq-answer').style.maxHeight='400px';this.querySelector('.faq-answer').style.opacity='1';this.querySelector('.faq-answer').style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';" onmouseout="this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';this.querySelector('.faq-answer').style.maxHeight='0';this.querySelector('.faq-answer').style.opacity='0';this.querySelector('.faq-answer').style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';" ontouchstart="var a=this.querySelector('.faq-answer');var open=a.style.maxHeight!=='0px'&&a.style.maxHeight!=='';if(open){this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';a.style.maxHeight='0';a.style.opacity='0';a.style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';}else{this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';a.style.maxHeight='400px';a.style.opacity='1';a.style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';}">
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;">
+          <span class="faq-num" style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Poppins',sans-serif;color:var(--blue);flex-shrink:0;transition:all .3s;">4</span>
+          <span style="font-weight:600;color:var(--navy);flex:1;">What are the MCA fees and eligibility?</span>
+          <span class="faq-arr" style="color:#c7d3ec;font-size:20px;line-height:1;transition:all .3s;">›</span>
         </div>
-        <div class="faq-a-wrap"><div class="faq-a">Yes! You can choose from loan assistance, easy EMI plans, and several flexible payment options. Contact our counsellors at admission@guniol.com or +91 9240271367 for personalised support.</div></div>
+        <div class="faq-answer" style="max-height:0;opacity:0;overflow:hidden;padding:0 20px 0 64px;font-size:14px;color:var(--text-mid);line-height:1.7;transition:all .4s;">
+          The Online MCA is a 2-year program with an annual fee of ₹49,000. Eligibility: Bachelor's degree in Computer Applications, Computer Science, or Mathematics with at least 50% marks.
+        </div>
       </div>
+
+      <!-- Card 5 -->
+      <div style="border-radius:12px;overflow:hidden;background:var(--light-bg);border:1px solid var(--border);border-top:4px solid var(--blue);box-shadow:0 2px 8px rgba(4,51,89,.06);transition:all .3s;" onmouseover="this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';this.querySelector('.faq-answer').style.maxHeight='400px';this.querySelector('.faq-answer').style.opacity='1';this.querySelector('.faq-answer').style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';" onmouseout="this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';this.querySelector('.faq-answer').style.maxHeight='0';this.querySelector('.faq-answer').style.opacity='0';this.querySelector('.faq-answer').style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';" ontouchstart="var a=this.querySelector('.faq-answer');var open=a.style.maxHeight!=='0px'&&a.style.maxHeight!=='';if(open){this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';a.style.maxHeight='0';a.style.opacity='0';a.style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';}else{this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';a.style.maxHeight='400px';a.style.opacity='1';a.style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';}">
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;">
+          <span class="faq-num" style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Poppins',sans-serif;color:var(--blue);flex-shrink:0;transition:all .3s;">5</span>
+          <span style="font-weight:600;color:var(--navy);flex:1;">How are online classes conducted?</span>
+          <span class="faq-arr" style="color:#c7d3ec;font-size:20px;line-height:1;transition:all .3s;">›</span>
+        </div>
+        <div class="faq-answer" style="max-height:0;opacity:0;overflow:hidden;padding:0 20px 0 64px;font-size:14px;color:var(--text-mid);line-height:1.7;transition:all .4s;">
+          Classes are delivered through an interactive Learning Management System (LMS) with recorded lectures, live sessions, e-content, practice tests, and virtual academic support available 24/7.
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div style="border-radius:12px;overflow:hidden;background:var(--light-bg);border:1px solid var(--border);border-top:4px solid var(--blue);box-shadow:0 2px 8px rgba(4,51,89,.06);transition:all .3s;" onmouseover="this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';this.querySelector('.faq-answer').style.maxHeight='400px';this.querySelector('.faq-answer').style.opacity='1';this.querySelector('.faq-answer').style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';" onmouseout="this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';this.querySelector('.faq-answer').style.maxHeight='0';this.querySelector('.faq-answer').style.opacity='0';this.querySelector('.faq-answer').style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';" ontouchstart="var a=this.querySelector('.faq-answer');var open=a.style.maxHeight!=='0px'&&a.style.maxHeight!=='';if(open){this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';a.style.maxHeight='0';a.style.opacity='0';a.style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';}else{this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';a.style.maxHeight='400px';a.style.opacity='1';a.style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';}">
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;">
+          <span class="faq-num" style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Poppins',sans-serif;color:var(--blue);flex-shrink:0;transition:all .3s;">6</span>
+          <span style="font-weight:600;color:var(--navy);flex:1;">Is the online degree valid for jobs and higher studies?</span>
+          <span class="faq-arr" style="color:#c7d3ec;font-size:20px;line-height:1;transition:all .3s;">›</span>
+        </div>
+        <div class="faq-answer" style="max-height:0;opacity:0;overflow:hidden;padding:0 20px 0 64px;font-size:14px;color:var(--text-mid);line-height:1.7;transition:all .4s;">
+          Yes. Degrees awarded by Ganpat University Online are valid for employment and higher education in India and abroad. The university is UGC-entitled and NAAC 'A' accredited.
+        </div>
+      </div>
+
+      <!-- Card 7 -->
+      <div style="border-radius:12px;overflow:hidden;background:var(--light-bg);border:1px solid var(--border);border-top:4px solid var(--blue);box-shadow:0 2px 8px rgba(4,51,89,.06);transition:all .3s;" onmouseover="this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';this.querySelector('.faq-answer').style.maxHeight='400px';this.querySelector('.faq-answer').style.opacity='1';this.querySelector('.faq-answer').style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';" onmouseout="this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';this.querySelector('.faq-answer').style.maxHeight='0';this.querySelector('.faq-answer').style.opacity='0';this.querySelector('.faq-answer').style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';" ontouchstart="var a=this.querySelector('.faq-answer');var open=a.style.maxHeight!=='0px'&&a.style.maxHeight!=='';if(open){this.style.background='var(--light-bg)';this.style.borderColor='var(--border)';this.style.boxShadow='0 2px 8px rgba(4,51,89,.06)';a.style.maxHeight='0';a.style.opacity='0';a.style.paddingBottom='0';this.querySelector('.faq-num').style.background='#fff';this.querySelector('.faq-num').style.color='var(--blue)';this.querySelector('.faq-arr').style.color='#c7d3ec';this.querySelector('.faq-arr').style.transform='rotate(0deg)';}else{this.style.background='#fff';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 30px rgba(76,121,220,.18)';a.style.maxHeight='400px';a.style.opacity='1';a.style.paddingBottom='18px';this.querySelector('.faq-num').style.background='var(--blue)';this.querySelector('.faq-num').style.color='#fff';this.querySelector('.faq-arr').style.color='var(--blue)';this.querySelector('.faq-arr').style.transform='rotate(90deg)';}">
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;">
+          <span class="faq-num" style="width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Poppins',sans-serif;color:var(--blue);flex-shrink:0;transition:all .3s;">7</span>
+          <span style="font-weight:600;color:var(--navy);flex:1;">Are EMI or loan options available?</span>
+          <span class="faq-arr" style="color:#c7d3ec;font-size:20px;line-height:1;transition:all .3s;">›</span>
+        </div>
+        <div class="faq-answer" style="max-height:0;opacity:0;overflow:hidden;padding:0 20px 0 64px;font-size:14px;color:var(--text-mid);line-height:1.7;transition:all .4s;">
+          Yes! You can choose from loan assistance, easy EMI plans, and several flexible payment options. Contact our counsellors at admission@guniol.com or +91 9240271367 for personalised support.
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer id="contact">
+  <span class="footer-orb o1"></span>
+  <span class="footer-orb o2"></span>
+  <span class="footer-orb o3"></span>
+  <div class="footer-wave">
+    <svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path fill="#fff" opacity="0.04" d="M0,40 C300,90 900,0 1200,50 L1200,0 L0,0 Z"/></svg>
+  </div>
   <div class="footer-inner">
     <div class="footer-top">
       <div>
@@ -1129,34 +2464,52 @@
   <img src="assets/img/logo_2020.png" alt="Ganpat University Online Logo" style="height: 48px; width: auto;" />
 </div>
         <p class="footer-desc">A UGC-approved online university committed to delivering recognised degree programs through digital learning. Established 2005 · Gujarat, India.</p>
+        <div class="footer-social">
+          <a href="#" title="Facebook"><span class="aicon" style="width:16px;height:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.7-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg></a>
+          <a href="#" title="Instagram"><span class="aicon" style="width:16px;height:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" title="LinkedIn"><span class="aicon" style="width:16px;height:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.5-.95 1.8-1.95 3.7-1.95 3.95 0 4.45 2.6 4.45 6V21h-4v-5.3c0-1.3-.02-3-1.85-3-1.85 0-2.15 1.45-2.15 2.9V21H9z"/></svg></a>
+          <a href="#" title="YouTube"><span class="aicon" style="width:16px;height:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 9l6 3-6 3z"/></svg></a>
+        </div>
       </div>
       <div>
         <h5>Explore</h5>
         <ul>
           <li><a href="#">Home</a></li>
-          <li><a href="#">About University</a></li>
-          <li><a href="#">Award &amp; Recognitions</a></li>
-          <li><a href="https://portal.ganpatuniversity.online/">Student Portal</a></li>
-          <li><a href="#">FAQs</a></li>
+          <li><a href="#about-intro">About University</a></li>
+          <li><a href="#accreditations">Award &amp; Recognitions</a></li>
+          <li><a href="#">Student Portal</a></li>
+          <li><a href="#faq">FAQs</a></li>
           <li><a href="#">Mandatory Disclosure</a></li>
         </ul>
       </div>
       <div>
         <h5>Online Programs</h5>
         <ul>
-          <li><a href="https://guniol.com/bachelor-of-business-administration.html">BBA Online</a></li>
-          <li><a href="https://guniol.com/master-of-business-administration.html">MBA Online</a></li>
-          <li><a href="https://guniol.com/master-of-computer-application.html">MCA Online</a></li>
-          <li><a href="https://guniol.com/scholarships.html">Scholarships</a></li>
-          <li><a href="https://admission.guniol.com/">Apply Now</a></li>
+          <li><a href="#">BBA Online</a></li>
+          <li><a href="#">MBA Online</a></li>
+          <li><a href="#">MCA Online</a></li>
+          <li><a href="#">Scholarships</a></li>
+          <li><a href="#">Apply Now</a></li>
         </ul>
       </div>
       <div class="footer-contact">
         <h5>Contact Us</h5>
-        <p>📍 Ganpat Vidyanagar, Mehsana-Gozaria Highway, Kherva, Gujarat – 384012</p>
-        <p>📧 <a href="mailto:admission@guniol.com">admission@guniol.com</a></p>
-        <p>📞 <a href="tel:9240271367">+91 9240271367</a></p>
-        <p>📞 <a href="tel:+919714520498">+91 97145 20498</a></p>
+        <p>
+          <span class="aicon" style="width:14px;height:14px;color:#7eb5ff;animation:iconBob 2.6s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-7.1 7-12a7 7 0 10-14 0c0 4.9 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg></span>
+          Ganpat Vidyanagar, Mehsana-Gozaria Highway, Kherva, Gujarat – 384012
+        </p>
+        <p>
+          <span class="aicon" style="width:14px;height:14px;color:#7eb5ff;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M3 6l9 7 9-7"/></svg></span>
+          <a href="mailto:admission@guniol.com">admission@guniol.com</a>
+        </p>
+        <p>
+          <span class="aicon" style="width:14px;height:14px;color:#7eb5ff;animation:iconWiggle 1.8s ease-in-out infinite;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.5 2.5.8 3.8.8.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.4 22 2 13.6 2 3c0-.6.4-1 1-1h4c.6 0 1 .4 1 1 0 1.3.3 2.6.8 3.8.1.4.1.8-.2 1.1z"/></svg></span>
+          <a href="tel:9240271367">+91 9240271367</a>
+        </p>
+        <p>
+          <span class="aicon" style="width:14px;height:14px;color:#7eb5ff;animation:iconWiggle 1.8s ease-in-out infinite .3s;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.5 2.5.8 3.8.8.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.4 22 2 13.6 2 3c0-.6.4-1 1-1h4c.6 0 1 .4 1 1 0 1.3.3 2.6.8 3.8.1.4.1.8-.2 1.1z"/></svg></span>
+          <a href="tel:+919714520498">+91 97145 20498</a>
+        </p>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1167,7 +2520,23 @@
 </footer>
 
 <!-- WhatsApp Float -->
-<a class="wa-btn" href="https://api.whatsapp.com/send?phone=919322854627&text=👋 Chatting with Ganpat University Online.." target="_blank" title="Chat on WhatsApp">💬</a>
+<a class="wa-btn" href="https://api.whatsapp.com/send?phone=919322854627&text=👋 Chatting with Ganpat University Online.." target="_blank" title="Chat on WhatsApp">
+  <span class="aicon" style="width:28px;height:28px;color:#fff;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.6-.7.7-.9.1-.2.1-.4 0-.6-.1-.2-.7-1.7-.9-2-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.2.3-.9 1-.9 2.3 0 1.3.9 2.6 1 2.8.1.2 1.8 2.8 4.4 3.8 2.6 1 2.6.7 3.1.6.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.1-1.4-.1-.1-.3-.2-.6-.4z"/><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.9-1.3A10 10 0 1012 2z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+  </span>
+</a>
+
+<!-- Scroll Progress Ring (bottom-left) -->
+<button type="button" class="scroll-progress" id="scrollProgressBtn" title="Scroll to top" aria-label="Page scroll progress, click to scroll to top">
+  <svg viewBox="0 0 56 56">
+    <circle class="sp-track" cx="28" cy="28" r="22"></circle>
+    <circle class="sp-fill" id="spFill" cx="28" cy="28" r="22"></circle>
+  </svg>
+  <span class="sp-label" id="spLabel">0%</span>
+</button>
+
+<!-- Chatbot Assistant (loaded from chatbot.html, button sits just above WhatsApp) -->
+<div id="chatbot-widget-container"></div>
 
 <script>
 function showFee(type, btn) {
@@ -1176,16 +2545,13 @@ function showFee(type, btn) {
   document.getElementById('fee-'+type).style.display = 'block';
   btn.classList.add('active');
 }
-function toggleFaq(el) {
-  const item = el.parentElement;
-  item.classList.toggle('open');
-}
+
 function drawPath(){
-  const wrap = document.getElementById('pathWrap');
   const stepsContainer = document.getElementById('pathSteps');
   const svg = document.getElementById('pathSvg');
-  const steps = stepsContainer.querySelectorAll('.path-step');
+  if (!stepsContainer || !svg) return; // guard: skip if not on this page
 
+  const steps = stepsContainer.querySelectorAll('.path-step');
   const wrapRect = stepsContainer.getBoundingClientRect();
   svg.setAttribute('width', stepsContainer.scrollWidth);
   svg.setAttribute('height', stepsContainer.offsetHeight);
@@ -1213,12 +2579,41 @@ function drawPath(){
 
 window.addEventListener('load', drawPath);
 window.addEventListener('resize', drawPath);
+
 function toggleFaq(el) {
   const item = el.parentElement;
   const wasOpen = item.classList.contains('open');
   item.parentElement.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
   if (!wasOpen) item.classList.add('open');
 }
+
+// -- ACCREDITATION LOGO SLIDER (single instance only) --
+(function () {
+  const logos = document.querySelectorAll('.accred-logo');
+  if (!logos.length) return;
+
+  let current = 0;
+
+  function showNext() {
+    const next = (current + 1) % logos.length;
+
+    logos[current].classList.remove('active');
+    logos[current].classList.add('exit');
+
+    logos[next].classList.remove('exit');
+    logos[next].classList.add('active');
+
+    setTimeout(() => {
+      logos[current].classList.remove('exit');
+    }, 600);
+
+    current = next;
+  }
+
+  setInterval(showNext, 5000); // * set to 5s for now so you can SEE it working -- change to 60000 once confirmed
+})();
+
+// -- FAQ entrance animation --
 (function(){
   const items = document.querySelectorAll('.faq-item');
   if (!('IntersectionObserver' in window)) {
@@ -1235,6 +2630,324 @@ function toggleFaq(el) {
   }, { threshold: 0.15 });
   items.forEach(i => obs.observe(i));
 })();
+
+// -- Feature cards entrance animation --
+(function(){
+  const items = document.querySelectorAll('.feat-card');
+  if (!items.length) return;
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(i => i.classList.add('feat-visible'));
+    return;
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, idx) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('feat-visible'), idx * 90);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  items.forEach(i => obs.observe(i));
+})();
+
+// -- Programs section entrance animation --
+(function(){
+  const sec = document.getElementById('programs');
+  if (!sec) return;
+  if (!('IntersectionObserver' in window)) { sec.classList.add('in-view'); return; }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  obs.observe(sec);
+})();
+
+document.addEventListener('DOMContentLoaded', function () {
+  const overlay = document.getElementById('enquiryModalOverlay');
+  const closeBtn = document.getElementById('enquiryModalClose');
+
+  if (!overlay || !closeBtn) return;
+
+  function openModal() {
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.btn-primary, .nav-cta').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeModal();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+  });
+
+  /* Auto-popup: bring the enquiry form back every 30 seconds as a gentle
+     reminder, unless it's already open (so we never interrupt someone
+     mid-typing or restack the open animation on top of itself). */
+  setInterval(function () {
+    if (!overlay.classList.contains('active')) {
+      openModal();
+    }
+  }, 30000);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const reveals = document.querySelectorAll('.intro-about');
+  if (!reveals.length || !('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('in-view'));
+    return;
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  reveals.forEach(el => obs.observe(el));
+});
+
+/* -- SCROLL PROGRESS RING --
+   Fills clockwise as the page scrolls down and unwinds as it scrolls back
+   up, with the live percentage shown in the centre. Clicking it scrolls
+   smoothly back to the top of the page. */
+(function () {
+  const fillCircle = document.getElementById('spFill');
+  const label = document.getElementById('spLabel');
+  const btn = document.getElementById('scrollProgressBtn');
+  if (!fillCircle || !label || !btn) return;
+
+  const CIRCUMFERENCE = 2 * Math.PI * 22; // matches r=22 on the SVG circle
+
+  function updateProgress() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? Math.max(0, Math.min(1, scrollTop / docHeight)) : 0;
+    const offset = CIRCUMFERENCE * (1 - pct);
+    fillCircle.style.strokeDashoffset = offset.toFixed(2);
+    label.textContent = Math.round(pct * 100) + '%';
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      updateProgress();
+      ticking = false;
+    });
+  }, { passive: true });
+
+  window.addEventListener('resize', updateProgress);
+
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  updateProgress();
+})();
+
+
+/* -- CHATBOT WIDGET --
+   Loaded from chatbot.html. Unlike the old admission-section approach,
+   <style> tags inserted via innerHTML work fine in place (no need to move
+   them to <head>) -- only <script> needs to be manually re-created since
+   innerHTML never executes scripts. Single script, single style, both
+   guarded against double-init inside chatbot.html itself. */
+document.addEventListener('DOMContentLoaded', async function () {
+  const container = document.getElementById('chatbot-widget-container');
+  if (!container) return;
+
+  try {
+    const response = await fetch('./chatbot.html', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Unable to load chatbot widget: ' + response.status);
+
+    const widgetHTML = await response.text();
+    const temp = document.createElement('div');
+    temp.innerHTML = widgetHTML;
+
+    const scripts = Array.from(temp.querySelectorAll('script'));
+    scripts.forEach(s => s.remove());
+
+    container.innerHTML = temp.innerHTML;
+
+    scripts.forEach(oldScript => {
+      const newScript = document.createElement('script');
+      if (oldScript.src) {
+        newScript.src = oldScript.src;
+      } else {
+        newScript.textContent = oldScript.textContent;
+      }
+      document.body.appendChild(newScript);
+    });
+  } catch (error) {
+    console.error('Chatbot widget error:', error);
+  }
+});
+
+/* -- ADMISSION PROCESS TIMELINE --
+   Inlined directly into this page (no fetch, no second file, no runtime
+   reconstruction of <style>/<script> tags) so the browser just parses and
+   runs it like any normal part of the page -- nothing to go wrong. */
+(function () {
+  const timeline = document.getElementById('adm3Timeline');
+  if (!timeline) return;
+  if (timeline.dataset.admInit === '1') return;
+  timeline.dataset.admInit = '1';
+
+  const ICONS = {
+    enquiry: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 11-3.8-7.1L21 3l-1 4.4"/></svg>',
+    counsel: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 8.2c1.2.3 2 1.4 2 2.7 0 1.1-.6 2.1-1.5 2.5M19.8 20c0-2.4-1.7-4.4-4-5.3"/></svg>',
+    form: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>',
+    upload: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>',
+    verify: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>',
+    fee: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><circle cx="7" cy="14.5" r="1.4" fill="currentColor" stroke="none"/></svg>',
+    confirm: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg>'
+  };
+
+  const STEPS = [
+    { key: 'enquiry', color: '#e63946', title: 'Enquiry Generation',
+      desc: "Submit a quick enquiry at ganpatuniversity.online with your name, number and the program you're interested in." },
+    { key: 'counsel', color: '#1a6fd4', title: 'Student Counselling',
+      desc: 'An admission expert calls you within 24 hours to recommend the right program, fee plan and intake.' },
+    { key: 'form', color: '#0e8fa8', title: 'Application Form',
+      desc: 'Fill in the official application form and get your DEB ID registered against your chosen program.' },
+    { key: 'upload', color: '#2a9d8f', title: 'Upload Documents',
+      desc: 'Upload marksheets, ID proof and a recent photograph through the student portal.' },
+    { key: 'verify', color: '#e9c46a', title: 'Document Verification',
+      desc: "The admission cell reviews your documents and confirms eligibility -- you're notified the moment it's approved." },
+    { key: 'fee', color: '#f4a261', title: 'Fee Payment',
+      desc: 'Pay via UPI, net banking, card, or an easy EMI plan. Instant receipt on payment.' },
+    { key: 'confirm', color: '#6a4c93', title: 'Admission Confirmed',
+      desc: 'Your official admission letter and LMS access are issued. Welcome aboard!' }
+  ];
+
+  STEPS.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'adm3-row';
+    row.style.setProperty('--c', s.color);
+    row.innerHTML =
+      '<div class="adm3-dot">' + (i + 1) + '</div>' +
+      '<div class="adm3-card">' +
+        '<div class="adm3-card-top">' +
+          '<div class="adm3-card-icon">' + ICONS[s.key] + '</div>' +
+          '<div>' +
+            '<div class="adm3-card-eyebrow">Step ' + (i + 1) + ' of ' + STEPS.length + '</div>' +
+            '<div class="adm3-card-title">' + s.title + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<p class="adm3-card-desc">' + s.desc + '</p>' +
+      '</div>';
+    timeline.appendChild(row);
+  });
+
+  const endRow = document.createElement('div');
+  endRow.className = 'adm3-end';
+  endRow.innerHTML =
+    '<div class="adm3-end-dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg></div>' +
+    '<div class="adm3-end-text"><strong>You\'re all set \uD83C\uDF89</strong><span>That\'s the full journey, from enquiry to confirmed seat.</span></div>';
+  timeline.appendChild(endRow);
+
+  const rows = Array.from(timeline.querySelectorAll('.adm3-row'));
+  const spineFill = document.getElementById('adm3SpineFill');
+
+  function revealOnView() {
+    if (!('IntersectionObserver' in window)) {
+      rows.forEach(r => r.classList.add('in-view'));
+      endRow.classList.add('in-view');
+      spineFill.style.height = '100%';
+      return;
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+    rows.forEach(r => obs.observe(r));
+    obs.observe(endRow);
+  }
+
+  function updateSpine() {
+    const rect = timeline.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const total = rect.height;
+    const start = vh * 0.85;
+    const traveled = start - rect.top;
+    const pct = Math.max(0, Math.min(1, traveled / (total + start - vh * 0.15)));
+    spineFill.style.height = (pct * 100) + '%';
+  }
+
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { updateSpine(); ticking = false; });
+  }
+
+  revealOnView();
+  updateSpine();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+})();
 </script>
+
+<div class="modal-overlay" id="enquiryModalOverlay">
+  <div class="modal-box" id="enquiryModalBox">
+    <button class="modal-close" id="enquiryModalClose" aria-label="Close">&times;</button>
+
+    <h3>Free Career Counselling</h3>
+    
+
+    <div class="form-group"><label>FULL NAME</label><input type="text" placeholder="Enter your full name"></div>
+    <div class="form-group"><label>MOBILE NUMBER</label><input type="tel" placeholder="+91 Enter mobile number"></div>
+    <div class="form-group"><label>EMAIL ADDRESS</label><input type="email" placeholder="Enter your email"></div>
+    <div class="form-group">
+      <label>SELECT COURSE</label>
+      <select>
+        <option value="">-- Select Course --</option>
+        <option>BBA – Bachelor of Business Administration</option>
+        <option>MBA – Master of Business Administration</option>
+        <option>MCA – Master of Computer Application</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>COURSE LEVEL</label>
+      <select>
+        <option value="">-- Course Category --</option>
+        <option>Bachelors</option>
+        <option>Masters</option>
+        <option>PGD</option>
+      </select>
+    </div>
+    <div class="form-group"><label>CITY</label><input type="text" placeholder="Your city"></div>
+    <div class="form-consent">
+      <input type="checkbox" id="consentModal" checked>
+      <label for="consentModal">I hereby authorize Ganpat University to contact me regarding admission information.</label>
+    </div>
+    <button class="form-submit">Submit Enquiry →</button>
+  </div>
+</div>
 </body>
 </html>
