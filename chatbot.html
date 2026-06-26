@@ -1,3 +1,8 @@
+<!-- ============================================================
+     Admissions Chatbot Widget — Ganpat University Online
+     4-question flow: Name → Course → Phone → City → Form
+     ============================================================ -->
+
 <style>
   #cbwRoot, #cbwRoot *, #cbwRoot *::before, #cbwRoot *::after { box-sizing: border-box; }
 
@@ -29,7 +34,7 @@
   .cbw-panel {
     position: fixed; right: 24px; bottom: 160px; z-index: 999;
     width: 336px; max-width: calc(100vw - 32px);
-    height: 460px; max-height: 70vh;
+    height: 480px; max-height: 70vh;
     background: #fff; border-radius: 16px; overflow: hidden;
     display: flex; flex-direction: column;
     box-shadow: 0 22px 60px rgba(4,51,89,.28);
@@ -158,7 +163,7 @@
   var input    = document.getElementById('cbwInput');
   var sendBtn  = document.getElementById('cbwSend');
 
-  var answers = { name: '', course: '' };
+  var answers = { name: '', course: '', phone: '', city: '' };
   var step = 0;
   var started = false;
 
@@ -176,19 +181,13 @@
     t.innerHTML = '<span></span><span></span><span></span>';
     body.appendChild(t);
     body.scrollTop = body.scrollHeight;
-    setTimeout(function () {
-      t.remove();
-      cb();
-    }, delay || 700);
+    setTimeout(function () { t.remove(); cb(); }, delay || 700);
   }
 
   function setMode(mode) {
-    foot.style.display = (mode === 'text') ? 'flex' : 'none';
+    foot.style.display  = (mode === 'text') ? 'flex' : 'none';
     chips.style.display = (mode === 'chips') ? 'flex' : 'none';
-    if (mode === 'text') {
-      input.value = '';
-      input.focus();
-    }
+    if (mode === 'text') { input.value = ''; input.focus(); }
   }
 
   function startConversation() {
@@ -196,9 +195,9 @@
     started = true;
     setMode('none');
     showTyping(function () {
-      addMsg("Hi! \uD83D\uDC4B I'm the admissions assistant for Ganpat University Online. Just 3 quick questions and I'll get you connected.", 'bot');
+      addMsg("Hi! 👋 I'm the admissions assistant for Ganpat University Online. Just 4 quick questions and I'll get you connected.", 'bot');
       showTyping(function () {
-        addMsg("First \u2014 what's your name?", 'bot');
+        addMsg("First — what's your name?", 'bot');
         step = 1;
         setMode('text');
         input.type = 'text';
@@ -210,10 +209,22 @@
   function handleTextSubmit() {
     var val = input.value.trim();
     if (!val) return;
+
+    // Phone validation at step 3
+    if (step === 3) {
+      var digits = val.replace(/\D/g, '');
+      if (digits.length < 7) {
+        input.placeholder = 'Please enter a valid phone number';
+        input.value = '';
+        return;
+      }
+    }
+
     addMsg(val, 'user');
     input.value = '';
 
     if (step === 1) {
+      // Step 1: Name collected → ask course
       answers.name = val;
       setMode('none');
       showTyping(function () {
@@ -221,18 +232,42 @@
         step = 2;
         setMode('chips');
       }, 550);
+
+    } else if (step === 3) {
+      // Step 3: Phone collected → ask city
+      answers.phone = val;
+      setMode('none');
+      showTyping(function () {
+        addMsg('Almost there! Which city are you from?', 'bot');
+        step = 4;
+        setMode('text');
+        input.type = 'text';
+        input.placeholder = 'Type your city...';
+      }, 550);
+
+    } else if (step === 4) {
+      // Step 4: City collected → open form
+      answers.city = val;
+      setMode('none');
+      showTyping(function () {
+        addMsg('Perfect, thanks ' + answers.name.split(' ')[0] + '! 🎉 I\'ve opened our enquiry form with your details — just confirm and submit.', 'bot');
+        step = 5;
+        openEnquiryModal();
+      }, 550);
     }
   }
 
   function handleChipClick(course) {
+    // Step 2: Course collected → ask phone
     answers.course = course;
     addMsg(course, 'user');
     setMode('none');
     showTyping(function () {
-      var firstName = answers.name ? answers.name.split(' ')[0] : '';
-      addMsg('Perfect, thanks' + (firstName ? ' ' + firstName : '') + '! \uD83C\uDF89 I\u2019ve opened our enquiry form with your details \u2014 just confirm and submit.', 'bot');
-      step = 4;
-      openEnquiryModal();
+      addMsg('Great choice! What\'s your WhatsApp or mobile number? We\'ll send you details there.', 'bot');
+      step = 3;
+      setMode('text');
+      input.type = 'tel';
+      input.placeholder = 'Enter your phone number...';
     }, 550);
   }
 
@@ -240,9 +275,19 @@
     var overlay = document.getElementById('enquiryModalOverlay');
     if (!overlay) return;
 
-    var textInput = overlay.querySelector('input[type="text"]');
-    if (textInput) textInput.value = answers.name;
+    // Pre-fill name
+    var nameInput = overlay.querySelector('input[type="text"]');
+    if (nameInput) nameInput.value = answers.name;
 
+    // Pre-fill phone
+    var phoneInput = overlay.querySelector('input[type="tel"]');
+    if (phoneInput) phoneInput.value = answers.phone;
+
+    // Pre-fill city (looks for a city field by placeholder or name attribute)
+    var cityInput = overlay.querySelector('input[placeholder*="city" i], input[name*="city" i]');
+    if (cityInput) cityInput.value = answers.city;
+
+    // Pre-select course in dropdown
     var courseSelect = overlay.querySelector('select');
     if (courseSelect && answers.course) {
       var opts = courseSelect.querySelectorAll('option');
@@ -259,19 +304,15 @@
     panel.classList.remove('open');
   }
 
+  // Event listeners
   launcher.addEventListener('click', function () {
     panel.classList.toggle('open');
     if (panel.classList.contains('open')) startConversation();
   });
 
-  closeBtn.addEventListener('click', function () {
-    panel.classList.remove('open');
-  });
-
+  closeBtn.addEventListener('click', function () { panel.classList.remove('open'); });
   sendBtn.addEventListener('click', handleTextSubmit);
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') handleTextSubmit();
-  });
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') handleTextSubmit(); });
 
   var chipButtons = chips.querySelectorAll('.cbw-chip');
   for (var c = 0; c < chipButtons.length; c++) {
